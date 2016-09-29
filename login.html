@@ -1,0 +1,52 @@
+<div class="big-bg">
+	<div id="header" style="height: 152px;" class="main-header">
+	   		<!-- 此dom不可变更 -->
+		     <window-operations>
+			    <div class="window-operations">
+			      <ul>
+			      	<li class="operation-button mini-window" ng-click="minWindow()" style="right: 50px;"></li>
+			       	<li class="operation-button close-window" ng-click="quitWindow()"></li>
+			       </ul>
+			    </div>
+			</window-operations>
+	   </div>
+	<div class="login-bg">
+		<form method="post" name="loginform" ng-submit="login(loginform.$valid)" novalidate>
+		   <div class="login-form login-pane login-page ng-scope" >
+		   		<div class="login-header">
+		   			<div class="login-logo">
+		   				<img src="img/login-tx.png">
+		   			</div>
+			   	</div>
+		   		<div class="clearfix login-body"style="height:249px;">
+					<div class="error-message"><img ng-if="errorMessage" src="img/error-pic.png" style="vertical-align: middle;margin-right: 10px;margin-top: -1px;" />{{errorMessage}}</div>
+					<div class="processMessage" ng-show="verLogin.process">
+						<div class="precess-img"  style="margin-top:40px;">
+							<img src="img/login-loading.png" class="uil-reload-css" />
+						</div>
+						<div class="message" ng-bind="processMessage"></div>
+					</div>
+					<div ng-show="!verLogin.process"style="padding-bottom:59px">
+			   			<div class="login-div account" style="border-bottom: 1px solid #999;" ng-style="unameStyle">
+		   					<label>用户名</label>
+		      		 		<input ng-model="verLogin.account" ng-focus="unameStyle={'border-bottom' : '1px solid #36b9af'}" ng-blur="unameStyle={'border-bottom' : '1px solid #999'}" type="text" name="account" placeholder="{{lang.inputAccount}}" ng-maxlength="32" required/>
+			   			</div>
+			   			<div style="clear:both;"></div>
+			   			<div class="login-div securitynumber" style="margin-top:13px;border-bottom: 1px solid #999;" ng-style="focusStyle">
+			   				<label class="login-label" style="width: 42px;">密&nbsp;&nbsp;&nbsp;码</label>
+			      		 	<input  ng-model="verLogin.pwd" ng-focus="focusStyle={'border-bottom' : '1px solid #36b9af'}" ng-blur="focusStyle={'border-bottom' : '1px solid #999'}" type="{{passwordType}}" name="verification" placeholder="{{lang.inputPwd}}" ng-maxlength="32" class="ng-invalid ng-invalid-required ng-touched" required/>
+			      		 	<img ng-click="showPassword = !showPassword" ng-src="{{eyesImgSrc}}" class="img" />
+			   			</div>
+			   			<div class="login_bottom" style="text-align: right;">
+		                    <input type="checkbox" name="check-1" id="check-1" ng-change="!verLogin.remember && (verLogin.autoLogin=verLogin.remember)" ng-model="verLogin.remember">
+		                    <label for="check-1" ng-bind="lang.remember"></label>
+		                    <input type="checkbox" id="check-2" name="check-2" ng-change="verLogin.autoLogin && (verLogin.remember=verLogin.autoLogin)" ng-model="verLogin.autoLogin">
+		                    <label for="check-2" ng-bind="lang.autoLogin"></label>
+						</div>
+						<div><button id="loginSubmit" type="submit" ng-disabled="loginform.$invalid" ng-class="{disabled:loginform.$invalid}" class="loginButton big">{{lang.login}}</button></div>
+					</div>
+		       </div>
+	       	</div>
+	      </form>
+	</div>
+</div>

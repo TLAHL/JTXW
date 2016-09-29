@@ -1,0 +1,44 @@
+<!--根据会话类型判断-->
+<div class="msg-container" ng-switch="chat.type">
+    <!--单人聊天-->
+    <div class="animate-switch" ng-switch-when="1">
+        <div class='chatdate'>{{msg.time|date:'HH:mm:ss'}}</div>
+
+        <!--显示头像和内容-->
+        <div class="" ng-class="{'me':msg.isSelf}">
+            <img ng-src="lang.fileSvr + msg.hid">
+
+            <!--闪信-->
+            <div class="msg-content" ng-if="msg.flashsms">
+
+            </div>
+
+            <!--消息类型 1文本消息,2 图片消息,3语音消息,4文件-->
+            <div class="msg-content" ng-switch="msg.type">
+                <!--文本消息-->
+                <div class="msg-type-text" ng-bind-html="msg.msg | convert" ng-switch-when="1"></div>
+                <!--图片-->
+                <img ng-src="msg.url" ng-switch-when="2" class="msg-type-img"/>
+                <!--语音-->
+                <div ng-switch-when="3" class="msg-type-voice">
+                    <!--时长-->
+                    <div>{{msg.vtime}}</div>
+                </div>
+                <!--文件-->
+                <div ng-switch-when="4" class="msg-type-file">
+                    <div class="file-icon"></div>
+                    <div class="file-name">{{msg.file}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--/单人聊天-->
+
+
+    <!--群组聊天-->
+    <div class="animate-switch" ng-switch-when="2">
+
+    </div>
+
+    <!--/群组聊天-->
+</div>

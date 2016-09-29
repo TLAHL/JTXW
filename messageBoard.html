@@ -1,0 +1,42 @@
+<div class="new-friends">
+
+    <div class="content-pannel-head">
+        <p class="head-title conv-title" style="vertical-align:middle;margin-bottom: 8px;">
+            <img src="img/board.png" width="40" />
+            <span style="position:relative;top:-16px;">
+                <span style="margin-left: 7px;color: #333;" >
+                    <span>待办咨询</span>
+                </span>
+            </span>
+        </p>
+        <!-- <div class="record icon-chat-clean" ng-if="FriendsList.length" ng-click="clearFriendMessage()"></div> -->
+        <div class="record" ng-class="{'refreshBoard':isRefresh}" style="cursor:pointer;" ng-click="loadingBoardList()" title="刷新"><img src="img/refresh-board.png" width="20" style="margin-bottom: -4px;margin-right: 5px;display:inline-block" />刷新</div>
+    </div>
+
+
+    <div class="group-member-container reset">
+        <div  id="sub-menu-pannel" class="conv-list-pannel ng-scope" style="background-color:#FAFAFA;width:100%;border:none;overflow:auto">
+                <ul class="list-with-avatar-and-info conv-lists" style="  margin-right: 20px;" ng-if="boardList.length">
+                    <li class=" list-item context-menu newfriends-notice"  ng-repeat="member in boardList">
+                        <div class="avatar  single-chat three " >
+		                    <div class="avatar-container">
+		                        <img ng-src="{{member.headImg?lang.fileSvr + member.headImg :rootPath + '/img/session-img.png'}}" image-404="img/session-img.png"/>
+		
+		                    </div>
+				        </div>
+                        <div class="info" style="padding-left: 8px;">
+                            <p class="name" style="color:#333;">
+                                <span>{{member.wxUserName}}</span>
+                            </p>
+                            <span class="boardtime">{{member.createTime |formattime}}</span>
+                        </div>
+                        <div class="desc-nowrap" ng-bind="member.content"></div>
+                        <div class="rightBtn deal-newfriends">
+                            <span class="btn-agree btn-receive-customer" ng-click="ReceiveServiceMessage(member)">接单</span>
+                        </div>
+                    </li>
+                </ul>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,11 @@
+<div class="emotion-container tab shadow" ng-if="emotionPanel.isFaceOpen">
+	<div class="tab-contents">
+		<div class="tab-content current">
+			<ul class="emotions">
+				<!-- ngRepeat: item in emotionPanel.emotionGroup -->
+				<li class="emotion" ng-repeat="item in emotionPanel.emotionGroup"><img ng-src="{{'image/face/' + item.src}}" data-index="$index" title="{{item.title}}" ng-click="emotionPanel.displayEmotion(item.alt)" alt="{{item.alt}}"></li>
+				<!-- end ngRepeat: item in emotionPanel.emotionGroup -->
+			</ul>
+		</div>
+	</div>
+</div>

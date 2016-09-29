@@ -1,0 +1,18 @@
+<div id="sub-menu-pannel" class="conv-list-pannel ng-scope list-bottom">
+    <div class="conv-lists-box">
+        <ul class="list-with-avatar-and-info conv-lists">
+            <li class="list-item conv-item context-menu ng-scope ng-isolate-scope" style="cursor: pointer;" ng-class="{'active':conv.groupid == activeGroup.groupid}" ng-repeat="conv in groups" ng-click="clickGroupItem(conv)" context-menu="conv.mygroup?myMenuOptions:otherMenuOptions">
+                <div class="avatar ng-isolate-scope single-chat">
+                    <div class="ng-isolate-scope">
+                        <img ng-src="{{rootPath + '/img/group-test.png'}}"/>
+                    </div>
+                </div>
+                <div class="info-txt">
+                    {{conv.group}}
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<div ui-view="" id="content-pannel" class="ng-scope">
+</div>

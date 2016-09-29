@@ -1,0 +1,183 @@
+<style>
+	.member-item:hover .member-item-name {
+		cursor: pointer;
+		color: #63a6f6;
+	}
+	.record-panel {
+		font-size: 14px;
+	}
+	.chat-record-panel{
+		top:50px;
+		width: 100%;
+		height: 92%;
+	}
+	.record-panel-close-img{
+		display: inline-block;
+		margin-top: 18px;
+		height: 20px;
+		width: 20px;
+		background-image: url(img/customer/history_noraml.png);
+		border: none;
+	}
+	.record-panel-close-img:hover{
+		display: inline-block;
+		margin-top: 18px;
+		height: 20px;
+		width: 20px;
+		background-image: url(img/customer/history_press.png);
+		border: none;
+	}
+</style>
+<div class="conv-detail-pannel ng-scope" ng-show="activeWXSession" ng-click="bodyClick()">
+    <div class="content-pannel-head">
+        <p class="head-title conv-title" style="vertical-align:middle;margin-bottom: 8px;">
+            <img width="40" height="" style="border-radius: 36%;  min-height: 40px; min-width: 40px;"
+				 ng-src="{{activeWXSession.wxhid?lang.fileSvr+activeWXSession.wxhid : rootPath + '/img/session-img.png'}}" image-404="img/session-img.png">
+            <span ng-style="downStyle" style="position:relative;top:-16px;" ng-click="downClick()">
+				<span style="margin-left: 7px;color: #333;" >
+					<span ng-bind="activeWXSession.wxusername"></span>
+				</span>
+			</span>
+        </p>
+        <div class="record" title="结束咨询" ng-show="activeWXSession.state == 0 ">
+			<span class="icon-chat-close"  ng-click = "closeCustomerSesscion(activeWXSession)"></span>
+		</div>
+        <div class="record" title="待回访" ng-show="activeWXSession.state == 0 ">
+			<span class="icon-chat-waiting"  ng-click = "setVisit()"></span>待回访
+		</div>
+        <div class="record" title="{{lang.session}}记录">
+			<span class="icon-chat-record"  ng-click = "showRecordList()"></span>咨询记录
+		</div>
+    </div>
+	<div class="record-panel" ng-show="record" ng-click="recordClick()">
+		<div class="record-tabs">
+			<div class="content-title" style="height: 50px;line-height: 50px;">
+				<span>咨询记录</span>
+				<span class="record-panel-close" ng-click="record=false" style="color: #4AE3D7;margin-left: 240px;">
+					<span style="margin-top:10px;margin-left:20px" class="record-panel-close-img"></span>
+				</span>
+			</div>
+			<div class="tabs-body">
+				<div id="historyArea" class="chat-record-panel"   scroll1="loadMorehistory()">
+					<historymessage ng-repeat="message in historyList"  pagesize="20"></historymessage>
+				</div>
+				<!-- <div style="height: 40px;line-height: 40px;text-align: center;position: absolute;bottom: 0;width: 100%;"><a ng-click="loadMoreText()" >加载更多</a></div> -->
+			</div>
+		</div>
+	</div>
+
+    <div class="content-pannel-body ng-isolate-scope" id="chat-box">
+        <div class="main-chat chat-items ng-isolate-scope" scroll="loadMore()" ="20"
+             style="bottom: 0px;">
+            <div class='chat-room-wrapper' >
+               <!-- <div ng-if="isLoadFinish" style="text-align: center;color: #aaa;"><span>没有更多记录</span></div>-->
+                <wxmessage ng-repeat="message in messages" on-finish-render pagesize="20" ></wxmessage>
+            </div>
+        </div>
+        <div class="drag-to-upload-pop" style="display:none;">
+            <div class="article">
+                <i class="iconfont"></i>
+                <span>拖拽文件到此发送</span>
+            </div>
+        </div>
+        <a href="javascript:" class="new-chat-reminder ng-hide" ng-show="chatBox.scrollBtn"
+           ng-click="chatBox.scrollToBottom()">
+            <span>您有新消息</span>
+        </a>
+
+    </div>
+	
+	<div  class="ng-isolate-scope" style="height: 110px;" ng-if="activeWXSession.state == 2 ">
+        <div class="send-msg-box-wrapper">
+            <p class="operate log-off btn-send active-chat" style="margin:auto auto;" ng-click="activateChat()">发起回访</p>
+        </div>
+    </div>
+	
+    <div responsive-input="" class="ng-isolate-scope" style="height: 110px;" ng-if="activeWXSession.state != 1 && activeWXSession.state != 2">
+        <div class="send-msg-box-wrapper">
+            <div class="input-area">
+                <ul class="tool-bar" tool-bar="">
+                    <li class="tool-item">
+						<div class="tool-icon img-file-icon">
+							<input title="图片" type="file" input-file="imageFile" on-change="postImageMessage(this,input.flashSMS)" class="file-input file-input-image" multiple accept=".jpg,.gpeg,.png,{{input.flashSMS?'':'.gif'}},.bmp" />
+						</div>
+                    </li>
+                    <li class="tool-item">
+                        <div class="tipper-attached">
+                            <div class="iconfont tool-icon us_lang-icon" title="常用语" ng-click = "usefulWordsShow()"></div>
+                        </div>
+                    </li>
+                    <li class="tool-item">
+                        <div class="tool-icon knowledge-icon" title="知识库" ng-click = "knowledgeShow()"></div>
+                    </li>
+                    <li class="tool-item">
+                        <div id="divEmotions" class="tool-icon forwardother-icon"  title="转单" ng-click="sendOrder()"></div>
+                    </li>
+                </ul>
+                <div class="msg-box">
+					<!-- <div style="position: absolute;bottom: 0;right: 10px;font-size: 10px;color:#a9a4a4;"><span ng-bind="writerCount" ng-style="editorStyle">0</span>/2048</div> -->
+                    <textarea ng-show="activeWXSession" ui-kindeditor class="textarea input-msg-box ng-isolate-scope"
+							  ng-model="input.text"></textarea>
+
+                </div>
+            </div>
+            <div class="action-area">
+                <a ng-click="postMessage()" title="{{sendTitle}}" class="send-message-button" ng-mouseenter="sendFocus()" ng-class="{'disabled':!!!input.text || overMax }">发送</a>
+            </div>
+        </div>
+    </div>
+    <!--常用语-->
+    <div class="record-panel"ng-show="words">
+    	<div class="record-tabs">
+	    	<div class="content-title words-title">
+	   		 	<span>常用语</span>
+	   		 	<span class="record-panel-close" ng-click="words=false">×</span>
+		 	</div>
+		 	<div class="group-member-container useful-words">
+        		<div  id="sub-menu-pannel" class="conv-list-pannel ng-scope" style="background-color:#fff;width:100%;">
+        			<div class="conv-lists-box ng-isolate-scope">
+        				<ul class="list-with-avatar-and-info conv-lists">
+                    		<li class="list-item  context-menu newfriends-notice" ng-repeat="item in userfulmsg|orderBy:sort">
+                    			<span ng-bind="item.content" ng-click="postMessage(item.content)"></span>
+                    		</li>
+                    	</ul>
+        			</div>
+        		</div>
+        	</div>
+    	</div>
+    </div>
+    
+    <!--知识库-->
+    <div class="record-panel w500"ng-show="knowledge">
+    	<div class="record-tabs">
+	    	<div class="content-title words-title">
+	   		 	<span>知识库</span>
+	   		 	<span class="knowledge-panel-close" ng-click="knowledge=false">×</span>
+		 	</div>
+		 	<div class="group-member-container useful-words">
+        		<div  id="sub-menu-pannel" class="conv-list-pannel ng-scope" style="background-color:#fff;width:200px;border-right: 1px solid #eee;float: left;">
+        			<div class="conv-lists-box ng-isolate-scope">
+        				<ul class="list-with-avatar-and-info conv-lists">
+                    		<li class="list-item  context-menu newfriends-notice" ng-repeat="item in knowledges" ng-click="showContent(item)">
+                    			<span ng-bind="item.title" class="konw-title"></span>
+                    			<span class="fr0">></span>
+                    		</li>
+                    	</ul>
+        			</div>
+        		</div>
+        		<div class="knowledge-info-panel"style="background-color:#fff;width:298px;float: left;" >
+        			<div class="content-title"style="border-bottom:0px;">
+        				<span ng-bind="currentItem.title"></span>
+        			</div>
+        			<div class="content-info">
+        				<div ng-bind="currentItem.content"></div>
+        			</div>
+        			<div class="sendBtn" style="position: absolute;bottom:10px;left:250px">
+        				<input type="button" class="sendContentBtn" value="发送" ng-disabled="!currentItem" ng-click = "postMessage(currentItem.content)"/>
+        			</div>
+        		</div>
+        	</div>
+    	</div>
+    </div>
+    <!-- end ngIf: !chat.conv.isOAConv -->
+</div>

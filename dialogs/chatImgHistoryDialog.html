@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html ng-app="chatApp">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>author - MDC</title>
+		<link href="../css/style.css" rel="stylesheet" type="text/css">
+		<style>
+			html,
+			body {
+				background: rgba(0, 0, 0, .2);
+				height: 100%;
+			}
+			
+			.big-img-container {
+				display: table-cell;
+				vertical-align: middle;
+				width: 363px;
+				height: 502px;
+				text-align: center;
+				margin-top: 10px;
+			}
+			
+			.big-img-container img {
+				border-radius: 3px;
+			}
+			
+			.no-more {
+				color: #e0e0e0;
+				text-align: center;
+				font-size: 12px;
+			}
+			
+			.rotate-0 {
+				-webkit-transform: rotate(0deg);
+				transform: rotate(0deg);
+			}
+			
+			.rotate-90 {
+				-webkit-transform: rotate(90deg);
+				transform: rotate(90deg);
+			}
+			
+			.rotate-180 {
+				transform: rotate(180deg);
+				-webkit-transform: rotate(180deg);
+			}
+			
+			.rotate-270 {
+				transform: rotate(270deg);
+				-webkit-transform: rotate(270deg);
+			}
+		</style>
+	</head>
+
+	<body ng-controller="chatImgController">
+		<!--div>看大图</div-->
+		<div class="chat-big-img" ng-mouseenter="ifhover=true" ng-mouseleave="ifhover=false">
+			<div class="pos">
+				<div class="close big-close" onclick="closeWindow()"></div>
+				<div class="big-img">
+					<div class="big-img-container" style="overflow:hidden;">
+						<div ng-class="{'rotate-0':index == 0, 'rotate-90':index == 1, 'rotate-180':index == 2, 'rotate-270':index == 3}">
+							<span>
+                        <!--正常显示-->
+                        <img onload="loadImage(this)" ng-src="{{file}}" >
+                    </span>
+						</div>
+					</div>
+				</div>
+
+				<div class="big-bottom">
+					<i class="operate-icon down-icon" ng-click="download()" ng-hide="message.flashsms"></i>
+					<i class="operate-icon roate-icon" ng-click="index=(index + 1)%4"></i>
+				</div>
+			</div>
+		</div>
+
+		<script src="../js/angular/angular.js"></script>
+		<script src="../js/app.lang.js"></script>
+		<script src="../js/nw-native.js"></script>
+
+		<script>
+			function loadImage(img) {
+				img.style.width = 'auto';
+				img.style.height = 'auto';
+				if (img.width >= img.height && img.width >= 363) {
+					img.style.width = '363px';
+					return;
+				}
+				if (img.height >= img.width && img.height >= 502) {
+					img.style.height = '502px';
+				}
+			}
+			
+			var app = angular.module("chatApp", ['app.lang']);
+			var http = require('http');
+			var fs = require('fs');
+			
+			app.controller('chatImgController', function($scope, $timeout, lang) {
+				var args = window.args, file;
+				$scope.file = file = lang.apiUrl + (args.file.fileSign || '').replace(/^\//, '');
+				
+				/**
+				 * 下载
+				 */
+				$scope.download = function() {
+					nw.openSaveAsDialog('未命名.png', function(path) {
+						
+						http.get(file, function(res) {
+							var writer = fs.createWriteStream(path, {
+								encoding: 'binary'
+							});
+							
+							res.on('data', function(chunk) {
+								writer.write(chunk);
+							});
+							
+							res.on('end', function() {
+								writer.end();
+							});
+							
+						}).on('error', function(e) {
+							nw.alert('图片下载失败');
+						});
+						
+					});
+				};
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,84 @@
+<style>
+    #content-pannel .content-pannel-head {
+        line-height: 50px;
+        font-size: 16px;
+        margin-left: 8px;
+        color: #333;
+    }
+
+    .conv-detail-pannel {
+        position: relative;
+        font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+    }
+
+    .member-container {
+        position: absolute;
+        top: 50px;
+        left: 11px;
+        right: 5px;
+        bottom: 130px;
+        overflow: auto;
+    }
+
+    .member-inner {
+        margin-top: 15px;
+    }
+
+    .member-item {
+        list-style: none;
+        display: inline-block;
+        width: 42px;
+        text-align: center;
+        margin-left: 10px;
+        margin-right: 10px;
+        margin-bottom: 30px;
+        font-size: 12px;
+    }
+
+    .member-item:hover {
+        color: #36B9AF;
+        cursor: pointer;
+    }
+
+    .member-avatar {
+        height: 42px;
+        margin-bottom: 8px;
+    }
+
+    .member-avatar img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .chat-bottom {
+        position: absolute;
+        bottom: 0;
+        height: 130px;
+        line-height: 130px;
+        text-align: center;
+        width: 100%;
+    }
+</style>
+<div class="conv-detail-pannel" ng-show="list.length">
+    <div class="content-pannel-head">
+    	<div style="margin-left: 8px;">
+        	{{activeGroup.group}} ( {{list.length}} )
+    	</div>
+    </div>
+
+    <div class="member-container">
+        <div class="member-inner">
+            <ul>
+                <li class="member-item" ng-repeat="it in list" ng-click="showUserInfo(it.id)"  title="{{it.name}}">
+                    <div class="member-avatar"><img  ng-src="{{it.hid?lang.fileSvr + it.hid : rootPath + '/img/session-img-42.png'}}" image-404="img/session-img-42.png"></div>
+
+                    <div class="member-item-name">{{it.name}}</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="chat-bottom">
+        <p class="operate log-off btn-send" ng-click="intoChat()" ng-bind="lang.enterChat"></p>
+    </div>
+</div>

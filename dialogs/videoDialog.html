@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>视频播放器</title>
+    <link href="../css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="../js/video-js/video-js.min.css" rel="stylesheet" type="text/css">
+    <style rel="stylesheet" type="text/css">
+        html, body {
+            overflow: hidden;
+        }
+
+        html:hover .dialog-header {
+            background-color: rgba(255, 255, 255, .3);
+        }
+
+        .dialog-header {
+            background-color: transparent;
+            border-bottom: none;
+            position: absolute;
+        }
+
+        .window-container {
+            top: 0;
+        }
+
+        .vjs-default-skin .vjs-volume-control {
+            margin-right: 20px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="dialog-header">
+    <div class="win-buttons">
+        <span class="close-window-btn window-btn" onclick="closeWindow()">×</span>
+    </div>
+</div>
+<div class="window-container">
+    <video id="mdcVideo" class="video-js vjs-default-skin" width="100%" height="100%">
+        <source id="source" type='video/mp4'/>
+    </video>
+</div>
+
+<script src="../js/nw-native.js" type="text/javascript"></script>
+<script src="../js/video-js/video.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+
+    var source = document.getElementById('source');
+    source.src = args.source;
+
+    var player = videojs('mdcVideo', {
+        techOrder: ["html5"],
+        autoplay: true,
+        controls: true,
+        preload: 'auto',
+        loop: false,
+        children: {
+            bigPlayButton: true,
+            textTrackDisplay: false,
+            posterImage: false,
+            errorDisplay: false,
+            controlBar: {
+                fullscreenToggle: false,
+                captionsButton: false,
+                chaptersButton: false,
+                subtitlesButton: false,
+                liveDisplay: false,
+                playbackRateMenuButton: false
+            }
+        }
+    });
+
+    player.on('fullscreenchange', function (a, b, c) {
+        //全屏事件在node-webkit中无效
+    });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<div class="msg-container" ng-class="{'not-me':message.wcUserId, 'me':message.taxUserId}" data-index="{{$index}}}">
+	<!--聊天时间-->
+	<div  class='chatdate'>{{message.createTime|date:'yyyy-MM-dd HH:mm'}}</div>
+
+	<!--显示头像和内容-->
+	<div class="chat-item" id="msg-item-{{message.wcUserId}}" ng-class="{'not-me':message.wcUserId, 'me':message.taxUserId}">
+
+		<div class="avatar chat-detail single-chat history-message">
+			<img style="cursor: auto;" ng-src="{{message.wcUserId? (lang.apiUrl).substring(0,((lang.apiUrl).length-1)) + message.wcUserImg : (message.taxUserHeadImg ? (lang.apiUrl).substring(0,((lang.apiUrl).length-1)) + message.taxUserHeadImg : rootPath + '/img/session-img.png')}}" image-404="img/session-img.png">
+		</div>
+        <div ng-class="{'taxName':message.taxUserId, 'wxName':message.wcUserId}" ng-bind="message.wcUserName? message.wcUserName: message.taxUserName"></div>
+		<div class="msg-content" ng-if="!message.msgType">
+			<div class="msg-type-text" style="width:50px; text-align: center">
+				<img ng-src="{{rootPath + '/img/msg-loading.gif'}}" />
+			</div>
+		</div>
+
+		<!--文本-text, 图片-image, 语音-voice, 视频-shortvideo, 音乐-music, 图文-news-->
+		<div class="msg-content" ng-if="message.msgType" ng-switch="message.msgType" ng-class="{'file-process-container':message.msgType == text || message.msgType == image || message.msgType == voice || message.msgType == music || message.msgType == news || message.msgType == video}"
+			context-menu="getContextMenu(message)">
+			<!--文本消息-->
+			<div class="msg-type-text handle-link" style="max-width: 210px;" ng-bind="message.content|transformExpression|trustHtml" ng-switch-when="text"></div>
+
+			<!--图片-->
+			<div class="msg-type-img" ng-switch-when="image" ng-click="imgHistoryClick(message)">
+				<!--显示缩略图-->
+				<img ng-src="{{lang.apiUrl + message.fileSign}}" />
+			</div>
+
+			<!--语音-->
+			<div ng-switch-when="voice" style="height:28px" class="msg-type-voice msg-type-text" ng-class="{'msg-voice-play':message.playing && message.wcUserId, 'msg-voice-play-customer':message.playing && message.taxUserId}" ng-click="downloadAudioMediahistory(message)">
+			</div>
+
+			<!--视频-->
+			<div ng-if="message.msgType == 'video' || message.msgType == 'shortvideo'" class="msg-type-video" ng-click="playRemoteVideo(message)" style="cursor: pointer;">
+				<img ng-src="{{lang.apiUrl + message.fileSign}}" />
+				<div class="play-cover">
+					<span class="btn-play glyphicon glyphicon-play-circle"></span>
+				</div>
+				<div class="conver-bottom">
+					<!--<span>20KB</span>-->
+					<span class="conver-bottom-time"><span ng-bind="message.fileSize || byteConvert"></span>＂</span>
+				</div>
+				<!--message.state 3 正在上传 2正在下载-->
+				<meter class="file-process file-process-position" ng-show="message.self?message.state==3:message.state==2" value='{{message.process}}' min='1' max='100'></meter>
+			</div>
+
+		</div>
+
+	</div>
+
+	<i class="clearfix"></i>
+	<!--/单人聊天-->
+</div>

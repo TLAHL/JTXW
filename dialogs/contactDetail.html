@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link href="../css/style.css" rel="stylesheet" type="text/css"/>
+    <style>
+        body {
+            cursor: default;
+            /*border:1px solid #3b6181;*/
+            border-radius:5px;
+        }
+
+        .mine-msg-header {
+            -webkit-app-region: drag;
+            app-region: drag;
+        }
+    </style>
+    
+
+</head>
+<body ng-app="detailDialog">
+
+<div ng-controller="detailController">
+    <div class="mine-msg-header first" >
+        <div class="dialog-header first"style="border-bottom:none;border-left:none;border-right:none">
+            <div class="win-buttons">
+                <span class="close-window-btn window-btn" onclick="closeWindow()">×</span>
+            </div>
+        </div>
+
+        <div class="mine-big-header">
+            <img ng-src="{{hidSrc}}" style="border-radius: 36%;" image-404="../img/def_person_l.png">
+
+            <p style="margin-top: 15px;" ng-bind="args.name"></p>
+        </div>
+    </div>
+
+    <div class="window-container" style="top:162px;">
+        <div class="mine-msg-list" style="margin-right: 35px;">
+            <ul style="padding: 0;">
+                <li>
+                    <label class="gray-color" ng-bind="lang.dept" style="vertical-align: top;"></label><div class="dark-color" ng-bind="args.dept" style="display: inline-block; width: 209px;"></div>
+                </li>
+                <li>
+                    <label class="gray-color" ng-bind="lang.mobile"></label><span class="dark-color" ng-bind="args.tele"></span>
+                </li>
+            </ul>
+        </div>
+         <div ng-if="args.self" class="dialog-buttons" style="bottom:30px;">
+            <div class="operate log-off" ng-click="confirmLogout()" ng-bind="lang.logout"></div>
+            <div class="operate revise" ng-click="updatePwd()" ng-bind="lang.updatePwd"></div>
+        </div>
+
+        <div class="dialog-buttons" style="bottom:30px;" ng-if="!args.self && args.isfriend">
+            <div class="operate log-off btn-send ng-binding" ng-click="openChatWindow()">发送消息</div>
+            <div class="operate log-off btn-send ng-binding" ng-click="deleteMember(args)" ng-bind="lang.delFriend"></div>
+        </div> 
+
+        <div class="dialog-buttons" style="bottom:30px;" ng-if="!args.isfriend&&!args.self">
+            <div class="operate log-off btn-send ng-binding" ng-click="addFriendDialog(args)">加好友</div>
+        </div>
+
+    </div>
+</div>
+<script src="../js/angular/angular.js"></script>
+<script src="../js/angular/angular-ui-router.js"></script>
+<script src="../js/angular-image-404.js"></script>
+<script src="../js/nw-native.js"></script>
+<script src="../js/app.lang.js"></script>
+<script src="../js/directive.js"></script>
+
+<script>
+    var app = angular.module("detailDialog", ['app.lang','angular-image-404']);
+
+    app.controller('detailController', function ($scope,$timeout, lang) {
+        $scope.lang = lang;
+        $scope.args = window.args;
+
+
+        $scope.hidSrc = window.args.hid? lang.fileSvr + args.hid : rootPath + '/img/def_person_l.png';
+        //修改密码
+        $scope.updatePwd = function(args){
+        	window.args.openUpdatePwdDialog(thisWin, args);
+        }
+        //发起会话
+        $scope.openChatWindow = window.args.openChatWindow;
+
+        //注销
+        $scope.confirmLogout = function(args){
+        	window.args.confirmLogout(thisWin, args);
+        };
+        
+        //添加好友
+        $scope.addFriendDialog = function(args){
+        	window.args.addFriendDialog(args, thisWin);
+        }
+        
+        //删除好友
+        $scope.deleteMember = function(args){
+        	window.args.deleteMember(args,thisWindow.window );
+        }
+        
+        args.isfriendCallback(function(isfriend){
+            $timeout(function(){
+                $scope.args.isfriend =  isfriend;
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

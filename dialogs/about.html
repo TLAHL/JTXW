@@ -1,0 +1,61 @@
+
+
+<!DOCTYPE html>
+<html lang="en" ng-app="detailDialog">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link href="../css/style.css" rel="stylesheet" type="text/css" />
+    <style>
+    	.window-container{overflow:hidden;}
+    </style>
+</head>
+
+
+<body ng-controller="updateCtrl">
+	<div class="dialog-header first">
+	    <div class="dialog-title">{{lang.about}}</div>
+	    <div class="win-buttons" >
+	        <span class="close-window-btn window-btn" onclick="closeWindow()">×</span>
+	    </div>
+	</div>
+	<div class="window-container-about">
+		<div class="about">
+			<div class="about-header">
+				<h1>行政助手</h1>
+				<span>版本：{{args.ver}}</span>
+			</div>
+			<div class="about-body">
+				<p>郑州信大捷安信息技术股份有限公司</p>
+				<p>http://www.xdja.com</p>
+			</div>
+		</div>
+	</div>
+<script src="../js/angular/angular.js"></script>
+<script src="../js/nw-native.js"></script>
+<script src="../js/app.lang.js"></script>
+
+<script>
+    var app = angular.module("detailDialog", ['app.lang']);
+
+    app.controller('updateCtrl', function($scope, lang){
+        $scope.lang = lang;
+        $scope.args = window.args;
+    });
+
+
+    var isMax = false;
+    thisWindow.on('maximize', function(){
+        isMax = true;
+    });
+
+    thisWindow.on('unmaximize', function(){
+        isMax = false;
+    });
+
+    function ngMaxWindow(){
+        isMax? unmaxWindow() : maxWindow();
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="grapOrderDialog">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+
+		<style>
+			body {
+				cursor: default;
+				margin: 0;
+				padding: 0;
+				font-family: 微软雅黑;
+			}
+			.grab {
+				height: 312px;
+				width: 328px;
+				font-size: 14px;
+				border-radius: 3px;
+				background-image: url(../img/customer/grabOrder2_03.png);
+				position: absolute;
+				border: solid 1px #eb6877;
+			}
+			.grab-menu{
+				background-image: url(../img/customer/grabOrder.gif);
+				height: 120px;
+			}
+			
+			.grab-back {
+				text-align: center;
+			}
+			
+			.grab-buttons {
+				float: right;
+				margin-right: 10px;
+				margin-top: 10px;
+			}
+			
+			.grab-back .grab-content>.img {
+				margin-top: 18px;
+				height: 35px;
+				width: 35px;
+			}
+			
+			.grab-back .grab-content span {
+				margin-top: 6px;
+				margin-bottom: 6px;
+				font-size: 14px;
+				color: #808080;
+				display: block;
+			}
+			
+			.grab-back .grab-content .grab-content-child {
+				margin-top: 6px;
+				font-size: 14px;
+				color: #333333;
+			}
+			.grab-back .grab-content .grab-content-child .grab-content-child-else{
+				/*margin-top: 22px;*/
+				height: 18px;
+			}
+			
+			.grab-back .grab-content .grab-content-child2 {
+				margin-top: 8px;
+				font-size: 12px;
+				color: #CCCCCC;
+			}
+			
+			.grab-back .grab-content .button {
+				width: 102px;
+				height: 31px;
+				line-height: 31px;
+				background-image: url(../img/customer/1-normal.png);
+				position: absolute;
+				bottom: 20px;
+				right: 54px;
+				color: #FFFFFF;
+			}
+			
+			.grab-back .grab-content .buttonCancel {
+				width: 102px;
+				height: 31px;
+				line-height: 31px;
+				background-image: url(../img/customer/2-normal.png);
+				position: absolute;
+				bottom: 20px;
+				left: 54px;
+				color: #333333;
+			}
+			
+			.grab-back .grab-content .button:active {
+				width: 102px;
+				height: 31px;
+				line-height: 31px;
+				background-image: url(../img/customer/1-press.png);
+				position: absolute;
+				bottom: 20px;
+				right: 54px;
+				color: #FFFFFF;
+			}
+			
+			.grab-back .grab-content .buttonCancel:active {
+				width: 102px;
+				height: 31px;
+				line-height: 31px;
+				background-image: url(../img/customer/2-press.png);
+				position: absolute;
+				bottom: 20px;
+				left: 54px;
+				color: #333333;
+			}
+		</style>
+		</style>
+	</head>
+
+	<body ng-controller="grapOrderController">
+		<div class="grab">
+			<div class="grab-menu">
+				<div class="grab-buttons">
+					<span class="close-window-btn window-btn" ng-click="onCancel()">
+						<img src="../img/customer/close.png" />
+					</span>
+				</div>
+			</div>
+
+			<div class="grab-back">
+				<div class="grab-content">
+					<img class="img" src="{{list.hid?lang.fileSvr+list.hid : '../img/customer/defalut6.png'}}" />
+					<span ng-bind="list.username"></span>
+					<div ng-if="list.type == 1" class="grab-content-child" ng-bind="list.msg | limitTo: 15"></div>
+					<img ng-if="list.type == 2" class="grab-content-child-else" ng-src="../img/customer/photo.png" />
+					<img ng-if="list.type == 3" class="grab-content-child-else" ng-src="../img/customer/voice.png" />
+					<img ng-if="list.type == 5" class="grab-content-child-else" ng-src="../img/customer/video.png" />
+					<img ng-if="list.type == 6" class="grab-content-child-else" ng-src="../img/customer/link.png" />
+					<img ng-if="list.type == 4" class="grab-content-child-else" ng-src="../img/customer/photo.png" />
+					<div class="grab-content-child2" ng-bind="list.time | date:'yyyy-MM-dd HH:mm'"></div>
+					<div class="buttonCancel" ng-click="onCancel()">忽略</div>
+					<div class="button" ng-click="onAgree()">我来解答</div>
+				</img>
+			</div>
+		</div>
+		<script src="../js/angular/angular.js"></script>
+		<script src="../js/nw-native.js"></script>
+		<script src="../js/app.lang.js"></script>
+
+		<script>
+			var app = angular.module("grapOrderDialog", ['app.lang']);
+			app.controller('grapOrderController', function($scope, lang) {
+				$scope.lang = lang;
+				$scope.list = window.args.list;
+				$scope.onAgree = function() {
+					window.args.onAgree();
+					window.closeWindow();
+				}
+				$scope.onCancel = function() {
+					window.args.onCancel();
+					window.closeWindow();
+				}
+			});
+	 		 
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html ng-app="ATApp">
+<head lang="en">
+    <style type="text/css">@charset "UTF-8";
+    [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak, .ng-hide:not(.ng-hide-animate) {
+        display: none !important;
+    }
+
+    ng\:form {
+        display: block;
+    }</style>
+    <meta charset="utf-8"/>
+    <meta name="renderer" content="webkit"/>
+    <style>
+        [ng-cloak] {
+            display: none;
+        }
+    </style>
+    <title ng-bind="lang.appName"></title>
+    <link rel="stylesheet" href="js/ui-bootstrap-0.14.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/app.css"/>
+    <link rel="stylesheet" href="./css/style.css"/>
+    <link rel="stylesheet" href="./css/reset.css"/>
+    <script>
+        (function (){
+            var gui = require('nw.gui');
+            gui.App.clearCache();//清除缓存
+        })();
+
+    </script>
+
+    <!-- <link rel="stylesheet" href="./css/bootstrap.css" />  -->
+    <script src="./js/angular/angular.js"></script>
+    <script src="./js/angular/angular-ui-router.js"></script>
+    <script src="js/ui-bootstrap-0.14.3/ui-bootstrap-tpls.min.js"></script>
+
+    <script src="js/nw-native.js"></script>
+    <script src="js/app.lang.js"></script>
+
+    <script charset="utf-8" src="js/kindeditor-4.1.10/kindeditor-min.js"></script>
+    <script charset="utf-8" src="js/kindeditor-4.1.10/lang/zh_CN.js"></script>
+
+    <script src="./js/filter.js"></script>
+    <script src="./js/factory.js"></script>
+    <script src="./js/directive.js"></script>
+    <script src="./js/angular-image-404.js"></script>
+
+    <script>
+        taxIM.init();
+    </script>
+</head>
+<body class="body is-app windows-os" prevent-drag="" dd-copy="" dd-click-url="" ng-click="bodyClick()">
+<!-- uiView:  -->
+<div id="layout-container" ui-view="" class="ng-scope" >
+</div>
+
+<script src="./js/ctrs/app.js"></script>
+<script src="js/ctrs/loginCtr.js"></script>
+<script src="js/ctrs/mainCtr.js"></script>
+<script src="js/ctrs/sessionListCtr.js"></script>
+<script src="js/ctrs/customerSessionListCtr.js"></script>
+<script src="js/ctrs/chatCtr.js"></script>
+<script src="js/ctrs/customerChatCtr.js"></script>
+<script src="js/ctrs/contactsListCtr.js"></script>
+<script src="js/ctrs/groupsCtr.js"></script>
+<script src="js/ctrs/memberwindowCtr.js"></script>
+<script src="js/ctrs/groupNoticeCtr.js"></script>
+<script src="js/ctrs/newFriendsCtr.js"></script>
+<script src="js/ctrs/boardCtr.js"></script>
+</body>
+</html>

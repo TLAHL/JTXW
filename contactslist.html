@@ -1,0 +1,83 @@
+<style>
+  .uib-tab > div {
+    color: #337ab7;
+    cursor: pointer;
+  }
+  .panel-default>.panel-heading { margin-top: -5px; }
+  .conv-lists-box .tab-content {
+	  border-bottom: 1px solid #36B9AF;
+  }
+</style>
+<script id="recursion" type="text/ng-template">
+      <uib-accordion close-others="true" ng-repeat="item in list">
+		  <span class="workmate-caret" ng-class="{'workmate-caret-active':item.isok}"></span>
+          <uib-accordion-group heading="{{item.name}}" is-open="item.isok"  ng-click="loadMembers(item)">
+              <ul ng-repeat="member in item.users">
+					<li class="list-item conv-item context-menu ng-scope ng-isolate-scope" ng-dblclick="contactsdblclick(member)" ng-class="{'active':member.id == activeWorkmate.id}"  ng-click="clickWorkmateItem($event, member,item.name)" context-menu="getMenuOptions(member)">
+					<div class="avatar ng-isolate-scope single-chat default-image-workmate">
+                         <div class="ng-isolate-scope " ng-show="member.active == 1">
+                              <img ng-src="{{member.hid?lang.fileSvr+member.hid : rootPath + '/img/session-img.png'}}" image-404="img/session-img.png"/>
+                         </div>
+                         <div class="ng-isolate-scope " ng-show="member.active != 1">
+                              <img ng-src="{{member.hid?lang.fileSvr+member.hid : rootPath + '/img/nosession-img.png'}}" image-404="img/nosession-img.png"/>
+                         </div>
+                    </div>
+					<div class="info-txt">
+                       <p> {{ member.name }}</p>
+                    </div>
+					</li>
+              </ul>
+              <ul ng-if="item.dept.length" ng-include="'recursion'"  ng-init="list=item.dept"></ul>
+          </uib-accordion-group>
+      </uib-accordion>
+</script>
+
+<div id="sub-menu-pannel" class="conv-list-pannel ng-scope list-bottom">
+    <div class="conv-lists-box ng-isolate-scope conv-list-pannel-contact">
+    <div ng-repeat ="test in item.users" >
+    	{{test.name}}
+    </div>
+	     <uib-tabset justified="true"><!-- tab切换 -->
+	     	<uib-tab heading="{{ lang.friends }}">
+     			<div id="sub-menu-pannel" class="conv-list-pannel ng-scope">
+     			
+	     			<div style="width:100%;background-color:#F5F9FF;"></div>
+				    <div class="conv-lists-box" >
+				        <ul class="list-with-avatar-and-info conv-lists">
+				          <li  ng-repeat="member in contacts">
+				        		<div class="first-letter" ng-if="getChar(member, $index)">{{ (member.szm | uppercase) || '其他'}}</div>
+				                <div class="list-item conv-item context-menu ng-scope ng-isolate-scope" ng-dblclick="contactsdblclick(member)" ng-class="{'active':member.id == activeContact.id}"  ng-click="clickContactItem(member)" context-menu="getMenuOptions(member)">
+				                	<div class="avatar ng-isolate-scope single-chat default-image-workmate">
+					                    <div class="ng-isolate-scope" ng-show="member.active == 1">
+					                        <img ng-src="{{member.hid?lang.fileSvr+member.hid : rootPath + '/img/session-img.png'}}" image-404="img/session-img.png"/>
+					                    </div>
+					                     <div class="ng-isolate-scope" ng-show="member.active != 1">
+					                        <img ng-src="{{member.hid?lang.fileSvr+member.hid : rootPath + '/img/nosession-img.png'}}" image-404="img/nosession-img.png"/>
+					                    </div>
+					                </div>
+					                <div class="info-txt">
+					                    {{member.name}}
+					                </div>
+				                </div>
+				                
+				            </li>
+				        </ul>
+				    </div>
+				</div>
+	     	</uib-tab>
+
+	     	<uib-tab heading="{{ lang.workmate }}" ng-click="loadworkmate()">
+	     		<div id="sub-menu-pannel" class="conv-list-pannel conv-list-contact ng-scope">
+     				<!--<div style="height:25px;width:100%;background-color:#335775;padding-top: 20px;"></div>-->
+				    <div class="conv-lists-box workmate-list">
+				        <ul class="list-with-avatar-and-info conv-lists">
+				           <ul ng-include="'recursion'" ></ul>
+				        </ul>
+				    </div>
+				</div>
+	     	</uib-tab>
+	     </uib-tabset>
+    </div>
+</div>
+
+<div ui-view="" id="content-pannel" class="ng-scope "></div>

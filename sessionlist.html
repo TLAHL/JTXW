@@ -1,0 +1,92 @@
+<div id="sub-menu-pannel" class="conv-list-pannel ng-scope list-bottom">
+    <div class="conv-lists-box ng-isolate-scope">
+        <ul class="list-with-avatar-and-info conv-lists">
+
+            <!--代办公文, 单独处理-->
+            <li class="list-item conv-item context-menu"
+                ng-repeat="conv in todoList|orderBy:'time':true" style="cursor: pointer"
+                ng-show="conv" ng-click="clickSessionItem(conv)" context-menu="todoMenu">
+
+                <div class="avatar single-chat three">
+                    <div class="unread-icon" ng-show="conv.unread>0"
+                         ng-class="{'unread-lt99':conv.unread > 0 && conv.unread<100, 'unread-gt99':conv.unread>99}">
+                        {{conv.unread>99?'' : conv.unread}}
+                    </div>
+                    <div class="avatar-container" ng-switch="conv.id">
+                        <img ng-switch-when="1001" ng-src="{{rootPath + '/img/todo-icon.png'}}"/>
+                        <img ng-switch-when="1002" ng-src="{{rootPath + '/img/maintenance-icon.png'}}"/>
+                        <img ng-switch-when="1003" ng-src="{{rootPath + '/img/video-meeting-icon.png'}}"/>
+                    </div>
+                </div>
+                <div class="info">
+                    <p class="name" ng-bind="conv.name"></p>
+                </div>
+                <div class="info">
+                    <p class="latest-msg last-message">
+                    	<img src="img/send-failed.png" style="vertical-align: middle; width: 15px; height: 15px; margin-left: 3px;" ng-if="conv.sendfailed== 1" />
+                        <span ng-if="conv.sendname">{{conv.sendname}}:</span><span ng-bind="conv.lastmsg|transformExpression|trustHtml"></span>
+                    </p>
+                </div>
+                <span class="time">
+                    {{conv.time||formattimeSession}}
+                </span>
+            </li>
+
+            <li class="list-item conv-item context-menu avatar-container"
+                style="cursor: pointer"
+                ng-class="{'active':conv.id == activeSession.id}"
+                ng-repeat="conv in sessionList|orderBy:['top', 'time']:true"
+                ng-click="clickSessionItem(conv)" id="chat-{{conv.id}}" data-index="{{$index}}"
+                context-menu="getListContextMenu(conv)">
+                <div ng-if="conv.top" class="list-top"></div>
+
+
+                <div class="avatar single-chat three "  ng-class="{'group' : conv.type == 2}">
+                    <div class="unread-icon" ng-show="conv.unread>0"
+                         ng-class="{'unread-lt99':conv.unread > 0 && conv.unread<100, 'unread-gt99':conv.unread>99}">
+                        {{conv.unread>99?'' : conv.unread}}
+                    </div>
+
+                    <!--单人和群聊-->
+                    <div class="avatar-container" ng-switch="conv.type" ng-if="conv.type != 4 && conv.type != 5">
+                        <!--单聊-->
+                        <img ng-switch-when="1" ng-src="{{conv.hid?lang.fileSvr + conv.hid : rootPath + '/img/session-img.png'}}" image-404="img/session-img.png" />
+                        <!--群聊-->
+                        <img ng-switch-when="2" src="img/group-test.png" />
+                    </div>
+
+                    <div class="avatar-container" ng-if="conv.type == 4 || conv.type == 5" ng-switch="conv.id">
+                        <!--新好友-->
+                        <img ng-switch-when="2001" src="img/img-new-friends.png" />
+                        <!--群通知-->
+                        <img ng-switch-when="2002" src="img/groupMsg.png" />
+                    </div>
+
+                </div>
+                <div class="info">
+                    <p class="name ng-binding" ng-class="{'active':conv.id == activeSession.id}" ng-bind="conv.name"></p>
+                </div>
+                <div class="info">
+                	<p class="disable-link"></p>
+                    <p class="latest-msg last-message" ng-class="{'active':conv.id == activeSession.id}">
+                        <span ng-if="conv.draftmsg && conv.id != activeSession.id"
+                              class="highlight ng-scope">[草稿]</span>
+                    <span ng-if="conv.draftmsg && conv.id != activeSession.id" ng-bind="conv.draftmsg"></span>
+                    <img src="img/send-failed.png" style="vertical-align: middle; width: 15px; height: 15px; margin-left: 3px;" ng-if="conv.sendfailed== 1" />
+                    <span ng-if="!(conv.draftmsg && conv.id != activeSession.id)" ng-bind-html="conv.lastmsg|transformExpression|trustHtml"></span>
+                    </p>
+                </div>
+                <span ng-if="!(conv.draftmsg && conv.id != activeSession.id)" class="time"
+                      ng-class="{'active':conv.id === activeSession.id}">
+                    {{conv.time|formattimeSession}}
+                </span>
+                <span ng-if="conv.draftmsg && conv.id != activeSession.id" class="time"
+                      ng-class="{'active':conv.id == activeSession.id}">
+                    {{conv.drafttime|formattimeSession}}
+                </span>
+            </li>
+        </ul>
+    </div>
+</div>
+<div ui-view="" id="content-pannel" class="ng-scope">
+</div>

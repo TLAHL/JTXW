@@ -1,0 +1,181 @@
+<div style="width:100%; border: 1px solid #36B9AF;">
+	<div id="header" class="main-header">
+	   		<!-- 此dom不可变更 -->
+	   		<div class="main-logo">
+	   			<img src="img/logo-sm.png">
+                <span ng-bind="lang.appName"></span>
+	   		</div>
+	   		<div class="main-search">
+			    <window-operations>
+			     <div class="window-operations">
+			      <ul>
+
+			       <li class="operation-button close-window" title="{{lang.closeIndexow}}" ng-click="closeIndexow()"></li>
+			       <li class="operation-button mini-window" title="{{lang.minWindow}}" ng-click="minWindow()"></li>
+			       <li ng-show="isMax" class="operation-button expand-window restoreWindow" title="{{lang.maxWindow}}" ng-click="restoreWindow();isMax =!isMax"></li>
+			       <li ng-show="!isMax" class="operation-button expand-window" title="{{lang.maxWindow}}" ng-click="maxWindow();isMax = !isMax"></li>
+                   <li>
+
+                       <a  class="operation-button set" href="javascript:" style="display: block;width:20px;height:15px;  z-index: 101;" ng-click="bodyClick();popMenuState = !popMenuState" ng-blur="popMenuState=false">
+                           <!--div>设置的弹出框</div-->
+                           <div class="window-set" ng-show="popMenuState">
+                               <ul class="set-group">
+                                   <li class="set-list first" ng-click="openSetting()" ng-bind="lang.settings"></li>
+                                  <!-- <li class="set-list set-group" ng-click="question()" ng-bind="lang.question"></li>
+                                   <li class="set-list" ng-click="help()" ng-bind="lang.help"></li>-->
+                                   <li class="set-list set-group" ng-click="checkUpdate()" ng-bind="lang.checkUpdate"></li>
+                                   <li class="set-list" ng-click="about()" ng-bind="lang.about"></li>
+                                   <li class="set-list set-group" ng-click="updatePwd()" ng-bind="lang.updatePwd"></li>
+                                   <li class="set-list" ng-click="confirmLogout()" ng-bind="lang.logout"></li>
+                                   <li class="set-list last set-group" ng-click="quitWindow()" ng-bind="lang.exit"></li>
+                               </ul>
+                           </div>
+                           <!--div>设置的弹出框</div-->
+                       </a>
+                   </li>
+			      </ul>
+			     </div>
+
+			    </window-operations>
+			    <div class="search-bar-wraper">
+                        <div class="">
+                        <span class="main-search-icon"></span>
+                            <input class="main-search-input" type="text" ng-keydown="keydown($event)"  ng-model="mainSearch" placeholder="{{lang.searchContactsAndGround}}">
+                            <span title="关闭" style="cursor:pointer;position: fixed;margin-top: -14px;font-size: 21px;margin-left: 175px;" ng-show="mainSearch" ng-click = "searchShow()">×</span>
+                        </div>
+                        <div class="search-bar-panel" ng-show="mainSearch" ng-click="mainSearchClick()">
+                            <div ng-if="searchContentUser.length" class="search-contact" >
+                                <p style="color:#333">搜索到的好友：</p>
+                                <p ng-if="!searchContentUser.length" style="margin-left:20px;font-size:12px;">没有搜索到相关好友</p>
+                                <div class="result-search-contact" ng-repeat="item in searchContentUser" tabindex='1' >
+                              <div ng-if="item.name" ng-click="openChatWindow(item, false)" style="cursor:pointer">
+                                <img ng-show="item.active==1"  ng-src="{{ item.hid?lang.fileSvr+item.hid : rootPath + '/img/session-img.png'}}" image-404="img/session-img.png">
+                                <img ng-show="item.active!=1"  ng-src="{{ item.hid?lang.fileSvr+item.hid : rootPath + '/img/nosession-img.png'}}" image-404="img/nosession-img.png">
+                                <span ng-bind="item.name"></span>
+                              </div>
+                                </div>
+                            </div>
+                            <div ng-if="searchContentGroup.length" class="search-group">
+                                <p style="color:#333">搜索到的群组：</p>
+                                <p ng-if="!searchContentGroup.length" style="margin-left:20px;font-size:12px;">没有搜索到相关群组</p>
+                                <div class="result-search-contact" ng-repeat="item in searchContentGroup">
+                                    <div ng-if="item.group" ng-click="openChatWindow(item, true)" style="cursor:pointer"><img  ng-src="img/group-test.png"><span ng-bind="item.group"></span></div>
+                                </div>
+                            </div>
+                            <div ng-if="!searchContentUser.length && !searchContentGroup.length">没有搜索结果</div>
+                        </div>
+                    </div>
+		    </div>
+	   </div>
+	   <div id="body" ng-click="bodyClick()">
+	   		<div id="menu-pannel">
+	   			<div class="profile">
+                    <div class="profile-big avatar ng-isolate-scope single-chat"
+                    ng-class="{'single-chat' : isSingle, 'group' : !isSingle, 'three':!isSingle &amp;&amp; _icon.length===3}"
+                    dd-avatar="" uid="home.$my.userProfileModel.uid" is-show-modal="'true'" style="height: 42px; width: 42px;">
+                        <!-- 单人头像 -->
+                        <!-- ngIf: isSingle -->
+                        <div ng-style="style" ng-if="true" class="ng-scope ng-isolate-scope" ng-click="showUserInfo(currentUser.id)">
+                            <!-- ngIf: hasUrl -->
+                            <!-- ngIf: !hasUrl -->
+                            <img ng-src="{{currentUser.hid? lang.fileSvr + currentUser.hid : rootPath + '/img/session-img-42.png' }}" image-404="img/session-img-42.png"/>
+                            <!-- end ngIf: !hasUrl -->
+
+                        </div>
+                        <div><span class="text-center" style="color: #4D4D4D">{{currentUser.name}}</span></div>
+                        <!-- end ngIf: isSingle -->
+                        <!-- 多人头像 -->
+                        <!-- ngIf: isGroup -->
+                    </div>
+                    <!--<p class="name ng-binding" ng-bind="currentUser.name" style="margin-top: 5px;"></p>-->
+                </div>
+
+                <ul class="main-menus" style="margin-top: 15px;">
+                	<li class="menu-item at-menu-message" ng-click="showSessionList();selectedIndex = 1"
+                    ng-class="{selected:selectedIndex == 1}">
+                        <i class="iconfont menu-icon" title="{{lang.session}}">
+                        </i><span>消息</span>
+                      <!--   <span class="text">
+                          消息
+                      </span> -->
+                        <!-- ngIf: home.unreadMsgCount>0 -->
+                    </li>
+                    <li class="menu-item at-menu-contact" ng-click="showContactsList();selectedIndex = 2"
+                    ng-class="{selected:selectedIndex == 2}">
+                        <i class="iconfont menu-icon" title="{{lang.contacts}}">
+                        </i><span>联系人</span>
+                       <!--  <span class="text">
+                           联系人
+                       </span> -->
+                        <!-- ngIf: home.unreadMsgCount>0 -->
+                    </li>
+                    <li class="menu-item at-menu-oa" ng-click="showGroups();selectedIndex = 3"
+                        ng-class="{selected:selectedIndex == 3}">
+                        <i class="iconfont menu-icon" title="{{lang.group}}">
+                        </i><span>群组</span>
+
+                        <!-- ngIf: home.unreadMsgCount>0 -->
+                    </li>
+                    <li class="menu-item at-menu-customer" ng-click="showCustomers();selectedIndex = 4"
+                        ng-class="{selected:selectedIndex == 4}" ng-show ="customer">
+                        <i class="iconfont menu-icon" title="{{lang.customer}}">
+                        </i><span>客服</span>
+
+                        <!-- ngIf: home.unreadMsgCount>0 -->
+                    </li>
+                    <!--li class="menu-item at-menu-more" ng-click="more =!more"
+                    ng-class="{selected:more}" ng-dblclick="home.scrollToUnReadConv()">
+                        <i class="iconfont menu-icon">
+                        </i>
+
+                        < ngIf: home.unreadMsgCount>0>
+                    </li-->
+                </ul>
+                <ul class="extra-options">
+                	<li class="extra-item more-actions">
+                        <div function-menu="" class="ng-isolate-scope" ng-click="addGroup()">
+                        	<div class="extra-item-box" title="{{lang.grouphatC}}">
+                                <i class="at-menu-addgroup"></i>
+                                <span>建群</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="extra-item more-actions" >
+                        <div function-menu="" class="ng-isolate-scope" ng-click="addFriends()">
+                          <div class="extra-item-box" title="添加好友">
+                              <i class="at-menu-add"></i>
+                              <span>添加</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="extra-item more-actions" >
+                        <div function-menu="" class="ng-isolate-scope" ng-click="openApp()">
+                            <div class="extra-item-box" title="办公">
+                                <i class="at-menu-app"></i>
+                                <span>办公</span>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- <li class="extra-item more-actions">
+                        <div function-menu="" class="ng-isolate-scope"  ng-click="openApp()">
+                            <div class="extra-item-box" ng-click="menu.openFunctionMenu()" title="{{lang.app}}">
+                                <i class="at-menu-app" > 
+                                </i>
+                            </div>
+                        </div>
+                    </li> -->
+                    <li class="extra-item more-actions">
+                        <div function-menu="" class="ng-isolate-scope" ng-click="openSetting()">
+                        	<div class="extra-item-box" title="{{lang.settings}}">
+                                <i class="at-menu-setting"></i>
+                                <span>设置</span>
+                            </div>
+                        </div>
+                    </li>
+
+                </ul>
+	   		</div>
+	   		<div ui-view="" id="menu-pannel-body">
+	   		</div>
+       </div>
+</div>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="detailDialog">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+
+		<style>
+			body {
+				cursor: default;
+				margin: 0;
+				padding: 0;
+				font-family: 微软雅黑;
+			}
+			.grab {
+				height: 311px;
+				width: 328px;
+				font-size: 14px;
+				border-radius: 3px;
+				background-image: url(../img/customer/order-background.png);
+				position: absolute;
+				border: solid 1px #36B9AF;
+			}
+			.grab-menu{
+				background-image: url(../img/customer/sendOrder.gif);
+				height: 120px;
+				margin-top: 10px;
+			}
+			.grab-back .grab-content span {
+				font-size: 14px;
+				/*color: #808080;*/
+				/*display: block;*/
+			}
+			.grab-back .grab-content .grab-content-child {
+				margin-top: 6px;
+				font-size: 14px;
+				color: #333333;
+				
+			}
+			.grab-back .grab-content .button {
+				width: 102px;
+				height: 31px;
+				line-height: 31px;
+				background-image: url(../img/customer/2-normal.png);
+				position: absolute;
+				bottom: 20px;
+				left: 54px;
+				color: #000000;
+				text-align: center;
+			}
+			
+			.grab-back .grab-content .buttonCancel {
+				width: 102px;
+				height: 31px;
+				line-height: 31px;
+				background-image: url(../img/customer/3-normal.png);
+				position: absolute;
+				bottom: 20px;
+				right: 54px;
+				color: #FFFFFF;
+				text-align: center;
+			}
+			
+			.grab-back .grab-content .button:active {
+				width: 102px;
+				height: 31px;
+				line-height: 31px;
+				background-image: url(../img/customer/2-press.png);
+				position: absolute;
+				bottom: 20px;
+				left: 54px;
+				color: #000000;
+				text-align: center;
+			}
+			
+			.grab-back .grab-content .buttonCancel:active {
+				width: 102px;
+				height: 31px;
+				line-height: 31px;
+				background-image: url(../img/customer/3-press.png);
+				position: absolute;
+				bottom: 20px;
+				right: 54px;
+				color: #FFFFFF;
+				text-align: center;
+			}
+			
+			.order-discription{
+				margin-top: 30px;
+				margin-bottom: 13px;
+				font-size: 14px;
+				color:#36B9AF;
+			}
+			.grab-content-child-menu{
+				text-align: left;
+				color:#36B9AF;
+			}
+			.grab-content-child-parent{
+				display: inline-block;
+				margin-left: 10px;
+				margin-right: 10px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="detailController">
+		<div class="grab">
+			<div class="grab-menu">
+				 
+			</div>
+
+			<div class="grab-back">
+				<div class="grab-content">
+					<div>
+						<div style="text-align: center;" class="order-discription">{{'客服 '+ msg.fromname + ' 转单'}}</div>
+						<div class="grab-content-child-parent">
+							<span class="grab-content-child-menu" ng-bind="desc[0]"></span>
+						    <span class="grab-content-child" ng-bind="desc[1]"></span>
+						</div>
+						
+					</div>
+					<div class="buttonCancel" ng-click="op(1)">接单</div>
+					<div class="button" ng-click="op(0)">拒绝</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="../js/angular/angular.js"></script>
+		<script src="../js/angular-image-404.js"></script>
+		<script src="../js/nw-native.js"></script>
+		<script src="../js/app.lang.js"></script>
+
+		<script>
+	    var app = angular.module("detailDialog", ['app.lang','angular-image-404']);
+
+	    app.controller('detailController', function ($scope,$timeout, lang) {
+	        $scope.lang = lang;
+	        $scope.msg = window.args.msg;
+	        var desc = window.args.msg.desc;
+	        var index = desc.indexOf('：');
+	        $scope.desc = [];
+	        $scope.desc.push(desc.substring(0,index+1));
+	        $scope.desc.push(desc.substring(index+1, desc.length));
+			$scope.op = window.args.op;
+	    });
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="dialogApp">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link href="../css/style.css" rel="stylesheet" type="text/css"/>
+</head>
+<body ng-controller="dialogController">
+<div class="dialog-header first">
+    <div class="dialog-title" ng-bind="title"></div>
+    <div class="win-buttons">
+        <span class="close-window-btn window-btn" onclick="closeWindow()">×</span>
+    </div>
+</div>
+
+<div class="window-container">
+    <div class="dialog-content">
+        <div class="dialog-content-parent">
+            <div>{{'转给' +  content + '?'}}</div><div class="add-group-name">
+            	<input id="descId" type="text" ng-model='description' placeholder="添加问题描述"/>
+            </div>
+        </div>
+    </div>
+    <div class="dialog-buttons">
+        <div class="operate revise" ng-click="cancel()">取消
+        </div>
+        <div class="operate log-off" ng-class="{'revise': flag}"  ng-disabled="flag" ng-click="ok()">
+        	确定
+        </div>
+    </div>
+</div>
+<script src="../js/angular/angular.js"></script>
+<script src="../js/nw-native.js"></script>
+<script>
+
+    var app = angular.module("dialogApp",[]);
+    app.controller('dialogController', function ($scope) {
+    	$scope.title = window.args.title;
+        $scope.content = window.args.content;
+        
+        $scope.description = "";
+        
+        $scope.flag = true;
+        $scope.$watch('description',function(disc){
+        	if(disc.length > 0 && disc.length <= 50){
+        		$scope.flag = false;
+        	}
+        	else
+        	{
+        		$scope.flag = true;
+        	}
+        })
+        $scope.ok = function(){
+        	if($scope.flag){
+        		return;
+        	}
+        	var value = $scope.description;
+        	window.args.ok(thisWindow, value);
+        }
+        
+        $scope.cancel = function(){
+        	window.close();
+        }
+    });
+</script>
+</body>
+</html>

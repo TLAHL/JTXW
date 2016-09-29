@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="detailDialog">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="../js/ui-bootstrap-0.14.3/css/bootstrap.min.css">
+    <link href="../css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="../css/app.css" rel="stylesheet" type="text/css"/>
+    <style>
+        body {
+            cursor: default;
+            border-radius:3px;
+        }
+        .group-search input { width: 100%; }
+        .group-search { 
+        	background: #E0EDF7;
+        	width: 278px;
+        	position: relative;
+        }
+        .nav-tabs.nav-justified>li {
+		  display: table-cell;
+		  width: 1%;
+		}
+		.record-tabs .nav-tabs.nav-justified {  
+			width: 100%; 
+			top: 0; 
+		}
+		a, .link {
+		  color: #808080;
+		  font-weight: bold;
+		}
+		.list-item .info-txt { color: #333; }
+		.list-with-avatar-and-info .list-item .avatar:not(.group-member) {
+		  float: left;
+		  margin-right: 7px;
+		}
+		.conv-lists .conv-item {
+		  padding-left: 13px;
+		}
+		.list-with-avatar-and-info .list-item {
+		  position: relative;
+		  box-sizing: border-box;
+		  padding: 9px 0 9px 19px;
+		  cursor: default;
+		}
+		.avatar {
+		  text-overflow: ellipsis;
+		  white-space: nowrap;
+		  word-wrap: normal;
+		  display: inline-block;
+		  box-sizing: border-box;
+		  position: relative;
+		}
+		.default-image-workmate {
+		  height: 38px;
+		  width: 38px;
+		  background-size: 38px 38px;
+		}
+		.tab-content {
+			position: absolute;
+			bottom: 3px;
+			padding-bottom: 3px;
+			left: 0;
+			top: 85px;
+			right: 0px;
+			overflow-y: auto;
+			padding-top: 0 !important;
+		}
+		.conv-lists .conv-item:hover { background-color: #B8EAE9; }
+		.searchResult {
+		  position: absolute;
+		  z-index: 99999;
+		  background: #fff;
+		  left: 0;
+		  right: 0;
+			bottom: 3px;
+			padding-bottom: 3px;
+			top: 37px;
+		  overflow: auto;
+		}
+		.noSearchResult{
+			width:100%;
+			height:200px;
+			font-size:16px;
+			color:#B8EAE9;
+			text-align:center;
+			padding-top:100px;
+		}
+    </style>
+    <script src="../js/angular/angular.js"></script>
+		<script src="../js/ui-bootstrap-0.14.3/ui-bootstrap-tpls.min.js"></script>
+		<script src="../js/angular-image-404.js"></script>
+		<script src="../js/nw-native.js"></script>
+		<script src="../js/app.lang.js"></script>
+
+		<script>
+			 var app = angular.module("detailDialog", ['app.lang', 'ui.bootstrap','angular-image-404']);
+			 app.controller('detailController', function ($rootScope, $scope,$filter, lang) {
+			 	 $scope.lang = lang;
+			 	 $rootScope.rootPath = window.rootPath;
+			 	 $scope.sessionList = window.args.sessionList;
+			 	 $scope.friends = window.args.friends;
+			 	 $scope.groups = window.args.groups;
+			 	 $scope.flashsmsGroup = window.args.flashsmsGroup;
+			 	 
+			 	 $scope.friends.length = 1;
+			 	 $scope.groups.length = 1;
+			 	 
+			 	 $scope.searchClean = function(){
+		        	$scope.searchText="";
+		        	$scope.list=[];
+		        }
+			 	 
+			 	 $scope.$watch('searchText', function (n, o){
+					if(!n) return $scope.friends = window.args.friends;
+					$scope.friends = $filter('filter')(window.args.friends, function(f){
+						var reg = new RegExp(n, 'i');
+			            if (reg.test(f.name) || reg.test(f.jp) || reg.test(f.usercode) || reg.test(f.tele) ) {
+			                return f;
+			            }
+					});
+				});
+				$scope.$watch('searchText', function (n, o){
+					if(!n) return $scope.groups = window.args.groups;
+					$scope.groups = $filter('filter')(window.args.groups, function(g){
+						if((new RegExp(n, 'i')).test(g.group)){
+							return g;
+						}
+					});
+				});
+			    $scope.tipClick = function(conv,  isgroup){
+			    	if(conv.active == 2) {
+			    		var altDialog = nw.alert({content:'当前用户未使用' + lang.appName + '，无法转发'});
+			    		return;
+			    	}
+			    	var altDialog = nw.confirm({
+		                	content:'确定发送给:' + (conv.name||conv.group),
+		                	ok:function(){
+		                		window.args.sendForward(conv, isgroup);
+		                		altDialog.close();
+		                		closeWindow();
+		                	}
+		                });
+	                altDialog.on('blur', function(){
+	                   altDialog.close();
+	                });
+	                return ;
+			    }
+			 })
+		</script>
+</head>
+<body ng-controller="detailController">
+	<div class="dialog-header first"  >
+	    <div class="dialog-title">转发</div>
+	    <div class="win-buttons" >
+	        <span class="close-window-btn window-btn" onclick="closeWindow()">×</span>
+	    </div>
+	</div>
+	<div class="window-container">
+	<div class="record-tabs">
+		<div>
+			<div class="group-search" style="-webkit-app-region: drag;app-region: drag;">
+                <input type="text" ng-model="searchText" placeholder="帐号/姓名/简拼/手机号" style="-webkit-app-region: no-drag;app-region: no-drag;">
+                <span class="search-icon" style="-webkit-app-region: no-drag;app-region: no-drag;"></span>
+                <span title="关闭" class="searchClean" style="right: 10px;" ng-if="searchText" ng-click = "searchClean()">×</span>
+	        </div>
+		</div>
+
+		
+		<div>
+			<uib-tabset justified="true">
+		    <uib-tab heading="最近聊天">
+		    	<div class="conv-lists-box">
+			    	<ul class="list-with-avatar-and-info conv-lists">
+				    	 <li class="list-item conv-item context-menu avatar-container"
+		                style="cursor: pointer"
+		                ng-repeat="conv in sessionList|orderBy:['top', 'time']:true" ng-click="tipClick(conv, conv.type==2 )" ng-show="!(conv.type==2 && !flashsmsGroup) && (conv.type==2 || conv.type==1)">
+			                <div class="avatar ng-isolate-scope single-chat default-image-workmate">
+				                <div class="ng-isolate-scope">
+			                        <img ng-src="{{conv.type == 2? rootPath + '/img/group-test.png' : (conv.hid?lang.fileSvr + conv.hid : rootPath + '/img/session-img.png')}}" image-404="{{conv.type == 2 ? '../img/group-test.png':'../img/session-img.png'}}"/>
+			                    </div>
+				            </div>
+				            <div class="info-txt ng-binding" ng-bind="conv.name"></div>
+		                </li>
+		           </ul>
+		       </div>
+		     </uib-tab>
+		     <uib-tab heading="好友">
+		     	<div class="conv-lists-box">
+	     			<ul class="list-with-avatar-and-info conv-lists">
+			     		<li class="list-item conv-item context-menu avatar-container"
+		                style="cursor: pointer" ng-repeat="f in friends" ng-click="tipClick(f, false)">
+		                	<div class="avatar ng-isolate-scope single-chat default-image-workmate">
+				                <div class="ng-isolate-scope" ng-show="f.active == 1">
+			     					<img ng-src="{{ f.hid?lang.fileSvr + f.hid : rootPath + '/img/session-img.png'}}" image-404="../img/session-img.png" />
+			     				</div>
+		                         <div class="ng-isolate-scope " ng-show="f.active != 1">
+		                              <img ng-src="{{f.hid?lang.fileSvr+f.hid : rootPath + '/img/nosession-img.png'}}" image-404="../img/nosession-img.png"/>
+		                         </div>
+			     			</div>
+			     			<div class="info-txt ng-binding" ng-bind="f.name"></div>
+			     		</li>
+			     	</ul>
+		     	</div>
+		     </uib-tab>
+		     <uib-tab heading="群组" ng-show="flashsmsGroup">
+		     	<div class="conv-lists-box">
+	     			<ul class="list-with-avatar-and-info conv-lists">
+			     		<li class="list-item conv-item context-menu avatar-container"
+		                style="cursor: pointer" ng-repeat="g in groups" ng-click="tipClick(g, true)">
+		                	<div class="avatar ng-isolate-scope single-chat default-image-workmate">
+				                <div class="ng-isolate-scope">
+			     					<img ng-src="{{ rootPath + '/img/group-test.png'}}" image-404="../img/group-test.png"/>
+			     				</div>
+			     			</div>
+			     			<div class="info-txt ng-binding" ng-bind="g.group"></div>
+			     		</li>
+			     	</ul>
+		     	</div>
+		     </uib-tab>
+		</uib-tabset>
+		</div>
+        </div>
+        
+        <div class="searchResult" ng-show="searchText">
+			<div class="conv-lists-box">
+	     			<ul class="list-with-avatar-and-info conv-lists">
+	     				<li class="noSearchResult" ng-if="!groups.length && !friends.length && searchText"><p>没有搜索结果</p><li>
+	     				<li class="list-item conv-item context-menu avatar-container" ng-if="friends.length">好友</li>
+			     		<li class="list-item conv-item context-menu avatar-container"
+		                style="cursor: pointer" ng-repeat="f in friends" ng-click="tipClick(f, false)">
+		                	<div class="avatar ng-isolate-scope single-chat default-image-workmate">
+				                <div class="ng-isolate-scope" ng-show="f.active == 1">
+			     					<img ng-src="{{ f.hid?lang.fileSvr + f.hid : rootPath + '/img/session-img.png'}}" image-404="../img/session-img.png" />
+			     				</div>
+		                         <div class="ng-isolate-scope " ng-show="f.active != 1">
+		                              <img ng-src="{{f.hid?lang.fileSvr+f.hid : rootPath + '/img/nosession-img.png'}}" image-404="../img/nosession-img.png"/>
+		                         </div>
+			     			</div>
+			     			<div class="info-txt ng-binding" ng-bind="f.name"></div>
+			     		</li>
+			     	</ul>
+			     	<ul class="list-with-avatar-and-info conv-lists" ng-show="flashsmsGroup">
+			     		<li class="list-item conv-item context-menu avatar-container" ng-if="groups.length">群组</li>
+			     		<li class="list-item conv-item context-menu avatar-container"
+		                style="cursor: pointer" ng-repeat="g in groups" ng-click="tipClick(g, true)">
+		                	<div class="avatar ng-isolate-scope single-chat default-image-workmate">
+				                <div class="ng-isolate-scope">
+			     					<img ng-src="{{ rootPath + '/img/group-test.png'}}" />
+			     				</div>
+			     			</div>
+			     			<div class="info-txt ng-binding" ng-bind="g.group"></div>
+			     		</li>
+			     	</ul>
+		    </div>
+		</div>
+	</div>
+		
+	</body>
+</html>

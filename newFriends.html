@@ -1,0 +1,45 @@
+<div class="new-friends" ng-show="activeSession" >
+
+	<div class="content-pannel-head">
+        <p class="head-title conv-title" style="vertical-align:middle;margin-bottom: 8px;">
+            <img src="img/img-new-friends.png" width="40" />
+            <span style="position:relative;top:-16px;">
+                <span style="margin-left: 7px;color: #333;" >
+                    <span>新好友</span>
+                </span>
+            </span>
+        </p>
+        <div class="record icon-chat-clean" ng-if="FriendsList.length" ng-click="clearFriendMessage()">清空</div>
+        <div class="record noclean" ng-if="!FriendsList.length"></div>
+    </div>
+    
+    
+    <div class="group-member-container reset">
+        <div  id="sub-menu-pannel" class="conv-list-pannel ng-scope" style="width:100%;border: 0;background: #fafafa;">
+            <div class="conv-lists-box ng-isolate-scope">
+            	<div class="no-friends" ng-if="!FriendsList.length"></div>
+                <ul class="list-with-avatar-and-info conv-lists" ng-if="FriendsList.length">
+                    <li class=" list-item context-menu newfriends-notice"  ng-repeat="member in FriendsList">
+                        <div class="avatar single-chat three newfriends">
+                            <img ng-src="{{member.hid?lang.fileSvr+member.hid : rootPath + '/img/session-img.png'}}"image-404="img/session-img"/>
+                        </div>
+                        <div class="info" >
+                            <p class="name" style="color:#333;">
+                                <span>{{member.userName}}</span>
+                            </p>
+                        </div>
+                        <div class="desc-nowrap" ng-bind="member.msg"></div>
+                        <div class="rightBtn deal-newfriends" ng-if="member.state==0&&member.ismine==0">
+                            <span class="btn-refuse" ng-click="refuseApply(member,$index)">拒绝</span>
+                            <span class="btn-agree" ng-click="agreeApply(member,$index)">同意</span>
+                        </div>
+                        <div class="rightBtn" style="margin-top: -9px;" ng-if="member.state==1"><p>已同意</p></div>
+                        <div class="rightBtn" style="margin-top: -9px;" ng-if="member.state==2"><p>已拒绝</p></div>
+
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+</div>

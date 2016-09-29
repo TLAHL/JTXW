@@ -1,0 +1,122 @@
+
+
+<!DOCTYPE html>
+<html lang="en" ng-app="detailDialog">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link href="../css/style.css" rel="stylesheet" type="text/css" />
+    <style>
+		.window-container,html,body{overflow:hidden;}
+    </style>
+</head>
+
+
+<body ng-controller="updateCtrl">
+	<div class="dialog-header first"  >
+	    <div class="dialog-title">{{lang.checkUpdate}}</div>
+	    <div class="win-buttons" >
+	        <!-- <span class="mini-window-btn window-btn" onclick="miniWindow()" ></span> -->
+	        <span class="close-window-btn window-btn" onclick="closeWindow()">×</span>
+	    </div>
+	</div>
+	<div class="window-container-about">
+		<div class="about">
+			<div class="update-header">
+				<img src="../img/logo-big.png">
+				<h1>行政助手</h1>
+			</div>
+			<div class="update-body">
+				<!-- 检测版本 -->
+				<div class="update-process" ng-if = "state == -1">
+					<p>正在为您检测最新版本...</p>
+					<div class="version-detail">
+					</div>
+			     </div>
+			     <!-- 检测到新版本 -->
+				<div class="update-process" ng-if = "state == 0">
+					<div class="version-title">有新版本: {{newVersion}}</div>
+					<div class="version-detail">
+					</div>
+					<div class="add-group-button">
+				    	<input class="btn-primary btn-large" type="button" ng-click="updateVersion()" value="更新">
+				    	<input class="btn-default btn-large" type="button" value="取消" onclick="closeWindow()">
+				    </div>
+				</div>
+				
+				 <!-- 显示错误信息 -->
+				<div class="update-process" ng-if = "errcode != 0 &&state != -1">
+					<div class="version-title">{{errmsg}}</div>
+					<div class="version-detail">
+					</div>
+					<div class="add-group-button">
+				    	<input class="btn-primary btn-large" type="button" onclick="closeWindow()" value="确定">
+				    </div>
+				</div>
+	
+				<!-- 检测到版本已是最新 -->
+				<div class="update-process"  ng-if = "state == 1">
+					<div class="update-already">
+						<div class="update-already-image">
+							<img src="../img/update-already.png">
+						</div>
+						<div class="update-already-content">
+							<h3>您的行政助手已是最新版本</h3>
+							<p>当前版本：<span ng-bind="version"></span></p>
+						</div>
+					</div>
+					<div class="add-group-button">
+				    	<input class="btn-primary btn-large" type="button" onclick="closeWindow()" value="确定">
+				    </div>
+				</div>
+			
+			</div>
+
+
+		</div>
+	</div>
+<script src="../js/angular/angular.js"></script>
+<script src="../js/nw-native.js"></script>
+<script src="../js/app.lang.js"></script>
+
+<script>
+    var app = angular.module("detailDialog", ['app.lang']);
+
+    app.controller('updateCtrl', function($scope,  $timeout, lang){
+        $scope.lang = lang;
+        $scope.args = window.args;
+        $scope.state = -1;
+        
+        $timeout(function(){
+        	var data = window.args.checkVersion();
+        	var ver = data.value.newver;
+        	$scope.newVersion = data.value.version;
+        	$scope.version = window.args.getVersion().ver;
+        	$scope.state = ver;
+        	$scope.errcode = data.errcode;
+        	$scope.errmsg = data.errmsg;
+        }, 200);
+        $scope.updateVersion = function(){
+     	   window.args.updateVersion(); 
+     	   
+     	   //'更新已执行'
+     	   closeWindow();
+        } 
+    });
+
+
+    var isMax = false;
+    thisWindow.on('maximize', function(){
+        isMax = true;
+    });
+
+    thisWindow.on('unmaximize', function(){
+        isMax = false;
+    });
+
+    function ngMaxWindow(){
+        isMax? unmaxWindow() : maxWindow();
+    }
+</script>
+</body>
+</html>

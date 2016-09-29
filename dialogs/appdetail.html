@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="detailDialog">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link href="../css/style.css" rel="stylesheet" type="text/css" />
+    <style>
+        body{cursor: default}
+        .more-app div{
+        	display: inline-block;
+        	text-align: center;
+        	margin-left: 20px;
+        	margin-right: 20px;
+            width: 60px;
+        }
+    </style>
+</head>
+<body ng-controller="detailController">
+
+<div class="dialog-header first"  >
+    <div class="dialog-title">{{lang.app}}</div>
+    <div class="win-buttons" >
+        <span class="close-window-btn window-btn" onclick="closeWindow()">×</span>
+    </div>
+</div>
+
+<div class="window-container">
+    <div class="more-app">
+        <!--<div class="more-app-item" ng-repeat="item in args">-->
+        <div onclick="nw.openUrl('http://83.16.16.4:6001/websites/hnsgsj/')">
+            <img src="{{args[0].url}}">
+            <p ng-bind="args[0].name"></p>
+        </div>
+        <div onclick="nw.openUrl('http://83.16.17.150:7001/')">
+            <img src="{{args[1].url}}">
+            <p ng-bind="args[1].name"></p>
+        </div>
+        <div onclick="nw.openUrl('http://83.16.16.4:6001/websites/hnsgsj/')">
+            <img src="{{args[2].url}}">
+            <p ng-bind="args[2].name"></p>
+        </div>
+        <div onclick="nw.openUrl('http://83.16.17.2/')">
+            <img src="{{args[3].url}}">
+            <p ng-bind="args[3].name"></p>
+        </div>
+        <!--</div>-->
+    </div>
+</div>
+
+<script src="../js/angular/angular.js"></script>
+<script src="../js/nw-native.js"></script>
+<script src="../js/app.lang.js"></script>
+
+
+<script>
+    var app = angular.module("detailDialog", ['app.lang']);
+
+    app.controller('detailController', function($scope, lang){
+        $scope.lang = lang;
+        $scope.args = window.args;
+        
+	    $scope.openurl = function(url){
+	    	url && nw.openUrl(url);
+	    }
+    });
+    
+    var isMax = false;
+    thisWindow.on('maximize', function(){
+        isMax = true;
+    });
+
+    thisWindow.on('unmaximize', function(){
+        isMax = false;
+    });
+
+    function ngMaxWindow(){
+        isMax? unmaxWindow() : maxWindow();
+    }
+</script>
+</body>
+</html>

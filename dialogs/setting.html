@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="settingDialog">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link href="../css/style.css" rel="stylesheet" type="text/css" />
+    <style>
+        body{
+        	cursor: default;
+            border-radius:5px;
+		}
+		.radioCheck{
+			content:url(../img/checked-raido.png);
+	    	display:inline;
+		}
+		.radioNoCheck{
+			content:url(../img/check-radio.png);
+	    	display:inline;
+		}
+    </style>
+</head>
+<body ng-controller="settingController">
+
+<div class="dialog-header"  >
+    <div class="dialog-title" ng-bind="lang.settings"></div>
+    <div class="win-buttons" >
+        <span class="close-window-btn window-btn" onclick="closeWindow()">×</span>
+    </div>
+</div>
+
+<div class="window-container">
+    <!-- <div class="more-app">
+        <div class="more-app-item" ng-repeat="item in args">
+            <img src="{{item.url}}">
+            <p>{{item.name}}</p>
+        </div>
+    </div> -->
+    <div class="setting">
+    	<div class="setting-tabs">
+    		<div class="setting-tabs-title">
+	    		<ul>
+	    			<li ng-click="gernerl=true" ng-class="{'active':gernerl}">通用设置</li>
+	    			<li ng-click="gernerl=false"ng-class="{'active':!gernerl}">快捷按键</li>
+	    		</ul>
+    		</div>
+
+    		<div class="setting-tabs-body"  ng-show="gernerl">
+    			<div class="setting-general">
+    				<div class="setting-item">
+    					<div class="setting-select" ng-model="sound" ng-click="soundfun(this)">
+    						<span class="checked-off" ng-class="{'checked-on':!!sound}"></span>
+    						<span >开启新消息提醒声音</span><span ng-bind="setting.pw"></span>
+    					</div>
+
+    					<!-- <div class="setting-select" ng-model="update" ng-click="updatefun(this)">
+    						<span class="checked-off" ng-class="{'checked-on':!!update}"></span>
+
+    						<span >有更新时自动升级</span>
+    					</div> -->
+    					<div class="setting-select" ng-model="auto" ng-click="autofun(this)">
+    						<span class="checked-off" ng-class="{'checked-on':!!auto}"></span>
+    						<span >开机自动启动</span>
+    					</div>
+    					<div class="setting-select">
+    						关闭主窗口时
+    					</div>
+    					<div class="setting-select">
+
+                            <label>
+                            	<span>
+	                            	<input ng-class="{'radioCheck':close==1,'radioNoCheck':close==0}" type="radio" name="close" ng-model="close" value="1" ng-change="keySends()">
+                            	</span>
+                              	<span>隐藏到任务栏通知区域，不退出程序</span>
+                            </label>
+                            <!-- <input type="radio" id="radio-1-1"  name="close"  class="regular-radio" ng-model="close" value="1" ng-change="keySends()">
+                            <label for="radio-1-1"></label>
+                            <span>隐藏到任务栏通知区域，不退出程序</span> -->
+    					</div>
+    					<div class="setting-select">
+                            <label>
+                                <input ng-class="{'radioCheck':close==0,'radioNoCheck':close==1}" type="radio" name="close" value="0" ng-model="close" ng-change="keySends()">
+                                <span></span>
+                                <span>退出程序</span>
+                            </label>
+    					</div>
+    				</div>
+    			</div>
+    		</div>
+
+    		<div class="setting-tabs-body" style="position:absolute;top:45px;bottom:0;left:155px;" ng-show="!gernerl">
+    			<div class="setting-general" style="position:relative;">
+    				<div class="setting-item">
+    					<div class="setting-select">
+
+    						<span class="txtdspan">发送消息</span>
+    							<!-- <select  class="setting-key">
+    								<option>Ctrl+Enter</option>
+    								<option>Enter</option>
+    							</select> -->
+                                <!-- <select class="sles-down" onblur="uuuu(this)" onfocus="uuuu2(this)" ng-model="mkey" ng-class="{'sles-down':!mkeyfuns}" ng-click="mkeyfun(this)" ng-options="mk.send as mk.name for mk in mkeys" ng-change="keySends()"></select> -->
+                                <span class="setting-key mkey sles-up" tabindex="0" ng-click="sendkeybox=!sendkeybox" ng-class="{'sles-down':!sendkeybox}" ng-bind="mkeyname"></span>
+                                <div class="send-key-box" ng-show="sendkeybox" onmouseout="">
+                                    <div class="sendent-key" ng-repeat="mkey111 in mkeys" ng-click="mkeysendfuns(this)" ng-model="mkey" ng-bind="mkey111.name"></div>
+                                </div>
+
+    					</div>
+    					<!-- <div class="setting-select" >
+    						<span>截取屏幕</span>
+    						<span class="setting-key" ng-click="printScreen()">Ctrl+Enter</span>
+    					</div> -->
+    					<div class="setting-select" >
+    						<span class="txtdspan" ng-bind="lang.openApp + lang.appName" ></span>
+    						<span class="setting-key" ng-click="openProject()" ng-bind="openkey"></span>
+
+    					</div>
+    					<div class="setting-select" ng-model="keyDefault" ng-click="keyDefault()" >
+    						<p class="operate log-off btn-send ng-binding">恢复默认按键</p>
+    					</div>
+    				</div>
+    			</div>
+    		</div>
+
+    	</div>
+    </div>
+</div>
+
+<script src="../js/angular/angular.js"></script>
+<script src="../js/nw-native.js"></script>
+<script src="../js/app.lang.js"></script>
+
+
+<script>
+    var app = angular.module("settingDialog", ['app.lang']);
+
+    app.controller('settingController', function($scope, lang){
+        $scope.lang = lang;
+        $scope.args = window.args;
+        $scope.gernerl = true;
+        $scope.sendkeybox = false;
+        // 操作窗口
+        var gui = require('nw.gui');
+        var win = args.win;
+        // 各个选项传参
+        var sound = args.sound;
+        var update = args.update;
+        var auto = args.auto;
+        var close = args.close;
+        var sendkey = args.sendkey;
+        var openkey = args.openkey;  //字母字符串
+
+        $scope.sound= sound     //声音开启
+        $scope.update = update; //自动升级开启
+        $scope.auto= auto;     //开机自启
+        /*$scope.update={
+                id:update,
+                name:'自动升级是否开启'
+            }//自动升级开启*/
+
+        $scope.close =close;  //x号选项
+
+        $scope.updatefun = function(_this){
+            _this.update = !_this.update;
+            saveSystemSetting();
+        }
+        $scope.autofun = function(_this){
+            _this.auto = !_this.auto;
+            saveSystemSetting();
+        }
+        $scope.soundfun = function(_this){
+            _this.sound = !_this.sound;
+            saveSystemSetting();
+        }
+        $scope.mkeyfun = function(_this){
+            // _this.mkeyfuns = true;
+            _this.mkeyfuns = !_this.mkeyfuns;
+
+            saveSystemSetting();
+        }
+
+
+        // 发送消息快捷键选项数组
+        $scope.mkeys=[];
+        $scope.mkeys = [
+            {name:'Enter', send:0},
+            {name:'Ctrl+Enter', send:1}
+        ];
+        $scope.mkey =sendkey;
+        //绑定快捷键显示
+        // $scope.mkey = sendkey;
+        $scope.mkeyname = $scope.mkeys[sendkey].name;
+        $scope.mkey = $scope.mkeys[sendkey].send;
+        $scope.mkeysendfuns = function(_this){
+
+            $scope.mkey = this.mkey111.send;
+            $scope.mkeyname = this.mkey111.name;
+            $scope.sendkeybox = false;
+            saveSystemSetting();
+        }
+
+
+        // 发送快捷键
+        $scope.keySends = function(){
+            saveSystemSetting();
+        }
+
+        $scope.keyDefault = function(){
+            saveDefaultSetting();
+        }
+
+        // 打开微信快捷键
+
+        if (openkey=="nu" || openkey=="") {
+            $scope.openkey = "无"
+
+        }else{
+            $scope.openkey = openkey;
+        }
+
+        $scope.openProject = function(){
+           var dialogProject = nw.confirm({
+                title: '请直接在键盘上输入新的快捷键',
+                content: '<div><span id ="content">'+$scope.openkey+'</span></div>',
+                ok: function (dialog) { //确定按钮
+
+                    if(keystring){
+
+                        $scope.openkey = keystring;
+                        $scope.$apply();
+                        saveSystemSetting();
+                        //  打开软件快捷键
+
+                        dialog.close();
+                    }
+
+                    dialog.close();
+                }
+            });
+
+
+        	var doc;
+        	dialogProject.on('document-end', function () {
+        		doc = dialogProject.window.document;
+        		 doc.onkeypress = keypress;
+            	 doc.onkeydown = keydown;
+            	 // doc.onkeyup = keyup;
+            });
+
+        	var keystring = "";//记录按键的字符串
+
+            // 判断 允许的快捷键
+            function showKeyName(e)
+            {
+                var keyName;
+
+                var keyValue=[];
+                      if(e.ctrlKey) keyValue.push("Ctrl");
+                      if(e.altKey) keyValue.push("Alt");
+                      if(e.shiftKey) keyValue.push("Shift");
+                      var keyCodeMap={"48":"0","49":"1","50":"2","51":"3","52":"4","53":"5","54":"6","55":"7","56":"8","57":"9","65":"A","66":"B","67":"C","68":"D","69":"E","70":"F","71":"G","72":"H","73":"I","74":"J","75":"K","76":"L","77":"M","78":"N","79":"O","80":"P","81":"Q","82":"R","83":"S","84":"T","85":"U","86":"V","87":"W","88":"X","89":"Y","90":"Z","112":"F1","113":"F2","114":"F3","115":"F4","116":"F5","117":"F6","118":"F7","119":"F8","120":"F9","121":"F10","122":"F11","123":"F12"};
+                     if(keyCodeMap[e.keyCode]){
+                       keyValue.push(keyCodeMap[e.keyCode]);
+                     }else if(e.keyCode==27){
+                    	 return "无"
+                     }else{
+                        return "Ctrl + Alt + V";
+                     }
+                     keyName = keyValue.join("+");
+                     if(e.keyCode >15 && e.keyCode<19){
+                        return "无";
+                    }
+
+                return keyName;
+
+            }
+
+
+
+        	 function $(s, doc)
+        	 {
+        		 doc = doc || document;
+        		 var ele = doc.getElementById(s);
+        	    return ele? ele:s;
+        	 }
+
+        	 function keypress(e)
+        	 {
+        	    var currKey=0,CapsLock=0,e=e||event;
+
+        	 }
+
+
+        	 function keydown(e)
+        	 {
+
+                $("content", doc).innerHTML ="";
+
+                keystring="";
+                keyName = showKeyName(e);
+                keystring += keyName;
+
+                $("content", doc).innerHTML = keystring;
+
+        	 }
+
+        }
+
+
+
+        // json插入数据
+
+
+        var saveSystemSetting = function(){
+
+            // 注销以前的快捷键
+            unRegisterKey();
+
+            if ($scope.openkey=="无") {
+                window.args.onSave && window.args.onSave($scope.sound, $scope.update, $scope.auto, parseInt($scope.close), $scope.mkey, "nu");
+
+                window.args.onfegg && window.args.onfegg("");
+
+            }
+            else{
+                 window.args.onSave && window.args.onSave($scope.sound, $scope.update, $scope.auto, parseInt($scope.close), $scope.mkey, $scope.openkey);
+
+                window.args.onfegg && window.args.onfegg($scope.openkey);   //传入新 全局快捷键
+             }
+
+
+        }
+
+            // sound:新消息提醒声音开启, update:自动更新，auto：开机自启动，close：关闭时退出(0)或最小化到托盘(1)，send：0（enter）1（ctrl+enter），open："A"-"Z"（打开税信的快捷键ctrl+alt+key）
+            // 使用方法：taxIM.SetAutoStartRun(true);    //开机自启动，参数传true，
+            // taxIM.SetAutoStartRun(false);  //开机不自启动，参数传false，
+
+        // 注销以前的快捷键
+
+        var unRegisterKey = function(){
+            // 注销以前的快捷键
+            var option = {
+              key : openkey,
+              active : function() {
+                win.restore();
+                win.focus();
+              },
+              failed : function(msg) {
+              }
+            };
+            // Create a shortcut with |option|.
+            var shortcut = new gui.Shortcut(option);
+            gui.App.unregisterGlobalHotKey(shortcut); // 注销以前的快捷键
+        }
+
+
+        // 恢复默认设置 插入数据
+
+        var saveDefaultSetting = function(){
+            /*$scope.sound = true;
+            $scope.update = true;  //自动升级开启
+            $scope.auto = true;
+            $scope.close = 1;*/
+            $scope.mkey = 1 ;
+            $scope.mkeyname = $scope.mkeys[1].name;
+            $scope.openkey = "Ctrl + Alt + V";
+
+            saveSystemSetting();
+
+
+        }
+    });
+
+</script>
+</body>
+</html>

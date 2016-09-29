@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html lang="en" ng-app="detailDialog">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link href="../css/style.css" rel="stylesheet" type="text/css" />
+		<style>
+			.window-container {
+				overflow: hidden;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="updateCtrl">
+		<div class="dialog-header first">
+			<div class="dialog-title">{{lang.help}}</div>
+			<div class="win-buttons">
+				<span class="close-window-btn window-btn" onclick="closeWindow()">×</span>
+			</div>
+		</div>
+		<div class="window-container">
+			<h1>帮助中心</h1>
+		</div>
+		<script src="../js/angular/angular.js"></script>
+		<script src="../js/nw-native.js"></script>
+		<script src="../js/app.lang.js"></script>
+
+		<script>
+			var app = angular.module("detailDialog", ['app.lang']);
+
+			app.controller('updateCtrl', function($scope, lang) {
+				$scope.lang = lang;
+				$scope.args = window.args;
+			});
+
+			var isMax = false;
+			thisWindow.on('maximize', function() {
+				isMax = true;
+			});
+
+			thisWindow.on('unmaximize', function() {
+				isMax = false;
+			});
+
+			function ngMaxWindow() {
+				isMax ? unmaxWindow() : maxWindow();
+			}
+		</script>
+	</body>
+
+</html>

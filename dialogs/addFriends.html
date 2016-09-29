@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="friendsDialog">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link href="../css/style.css" rel="stylesheet" type="text/css"/>
+   <style>
+        body{
+        	cursor: default;
+            border-radius:5px;
+        }
+
+        .input-search {
+        	width: 60% !important;
+        	border-bottom-right-radius: 0 !important;
+        	border-top-right-radius: 0 !important;
+        }
+        .noSearchResult {
+		  width: 100%;
+		  height: 200px;
+		  font-size: 16px;
+		  color: #B8EAE9;
+		  text-align: center;
+		  padding-top: 100px;
+		}
+    </style>
+</head>
+<body ng-controller="friendsController">
+
+<div class="dialog-header first"  >
+    <div class="dialog-title">添加{{lang.friends}}</div>
+    <div class="win-buttons" >
+        <span class="close-window-btn window-btn" onclick="closeWindow()">×</span>
+    </div>
+</div>
+<div class="window-container" style="background: #EEF5FB;">
+    <div class="add-group" style="position: relative;" ng-class="{'search-none':searchNone}">
+        <div class="friends-search" style="-webkit-app-region: drag;app-region: drag;width:268px;position: relative;">
+            <input class="input-search"  type="text" ng-model="searchText" placeholder="帐号/姓名/简拼/手机号"
+                           style="-webkit-app-region: no-drag;app-region: no-drag;">
+            <div class="btn-search"  ng-click= "searchMember(searchText);flag=1"><span style="border-left: 1px solid #D6DBDF; padding-left: 13px;-webkit-app-region: no-drag;app-region: no-drag;">搜索</span></div>
+            <span class="search-icon" style="-webkit-app-region: no-drag;app-region: no-drag;top: 8px;left: 10px"></span>
+            <span title="关闭" class="searchClean" ng-show="searchText" ng-click = "searchText='';">×</span>
+        </div>
+        <div class="add-group-panel-left" style="top:79px;width:298px;border-radius: 0 0 5px 5px;">
+            <div>
+            	<div class="noSearchResult" ng-if="searchText && flag && !results.length"><p>没有搜索结果</p></div>
+            	<div class="noSearch" ng-show="!flag || !searchText"><p>搜索联系人</p></div>
+                <div class="group-member-list" ng-repeat="item in results|orderBy:'active'" ng-click="showUserInfo2(item.id)" ng-if="searchText && results.length">
+                    <span ng-show="item.active == 1" ><img class="user-image" ng-src="{{item.hid?lang.fileSvr+item.hid :  '../img/session-img.png'}}" image-404="../img/session-img.png"></span>
+                    <span ng-show="item.active != 1"><img class="user-image" ng-src="{{item.hid?lang.fileSvr+item.hid :  '../img/nosession-img.png'}}" image-404="../img/nosession-img.png"></span>
+                    <span class="user-name" ng-bind="item.name"></span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="../js/angular/angular.js"></script>
+<script src="../js/angular-image-404.js"></script>
+<script src="../js/nw-native.js"></script>
+<script src="../js/app.lang.js"></script>
+
+
+<script>
+
+    var app = angular.module("friendsDialog", ['app.lang', 'angular-image-404']);
+    app.controller('friendsController', function ($scope, lang,$rootScope) {
+        $scope.lang = lang;
+        $scope.flag = false;
+        $scope.sssid ='';
+        $scope.args = window.args;
+        $scope.results = [];
+
+        $scope.searchMember =	function(text) {
+        	$scope.results = window.args.searchMember(text);
+        };
+
+        $scope.$watch('searchText', function(ov, nv){
+            if(!ov) {
+                $scope.results = [];
+                $scope.flag = 0;
+            }
+        });
+
+   		$scope.showUserInfo2 = function (dw) {
+            window.args.onSave && window.args.onSave(dw, thisWin);
+        };
+    });
+
+</script>
+</body>
+</html>

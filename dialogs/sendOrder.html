@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="detailDialog">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="../js/ui-bootstrap-0.14.3/css/bootstrap.min.css">
+    <link href="../css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="../css/app.css" rel="stylesheet" type="text/css"/>
+    <style>
+        body {
+            cursor: default;
+            border-radius: 3px;
+        }
+
+        .group-search input {
+            width: 100%;
+        }
+
+        a, .link {
+            color: #808080;
+            font-weight: bold;
+        }
+
+        .list-item .info-txt {
+            color: #333;
+        }
+
+        .list-with-avatar-and-info .list-item .avatar:not(.group-member) {
+            float: left;
+            margin-right: 7px;
+        }
+
+        .conv-lists .conv-item {
+            padding-left: 13px;
+        }
+
+        .list-with-avatar-and-info .list-item {
+            position: relative;
+            box-sizing: border-box;
+            padding: 11px 19px 11px 19px;
+            cursor: default;
+        }
+
+        .avatar {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            word-wrap: normal;
+            display: inline-block;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .default-image-workmate {
+            height: 38px;
+            width: 38px;
+            background-size: 38px 38px;
+        }
+
+        .conv-lists .conv-item:hover {
+            background-color: #e2f2fe;
+        }
+
+        .searchResult {
+            position: absolute;
+            z-index: 99999;
+            background: #fff;
+            left: 1px;
+            right: 1px;
+            bottom: 1px;
+            top:0;
+            overflow: auto;
+        }
+
+        .group-member-list .user-check {
+            float: right;
+            top: 20px;
+        }
+
+        .nameli {
+            overflow: hidden;
+            line-height: 27px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body ng-controller="sendOrder">
+<div class="dialog-header first">
+    <div class="dialog-title">转单</div>
+    <div class="win-buttons">
+        <span class="close-window-btn window-btn" onclick="closeWindow()">×</span>
+    </div>
+</div>
+<div class="window-container">
+    <div class="record-tabs">
+        <div class="searchResult">
+            <div class="conv-lists-box">
+                <ul class="list-with-avatar-and-info conv-lists" ng-repeat="g in groups" ng-if="g.memberList && g.memberList.length > 0">
+                    <li class="list-item conv-item context-menu avatar-container nameli" ng-click="sendfor(g, false)">
+                        <div class="user-name" ng-bind="g.groupName" style="float: left;"></div>
+                        <div style="float: right;">
+                            <span>全组</span>
+                            <span class="checked-off user-check" ng-class="{'checked-on':mapSelected[item.id]}"></span>
+                        </div>
+                    </li>
+                    <li class="list-item conv-item context-menu avatar-container"
+                        style="cursor: pointer" ng-repeat="f in g.memberList" ng-click="sendfor(f,g)">
+                        <div class="avatar ng-isolate-scope single-chat default-image-workmate">
+                            <div class="ng-isolate-scope">
+                                <img ng-src="{{ f.headImgID ?lang.fileSvr + f.headImgID  : rootPath + '/img/session-img.png'}}"
+                                     image-404="../img/session-img.png"/>
+                            </div>
+                        </div>
+                        <div class="info-txt ng-binding" ng-bind="f.name"></div>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="../js/angular/angular.js"></script>
+<script src="../js/angular-image-404.js"></script>
+<script src="../js/nw-native.js"></script>
+<script src="../js/app.lang.js"></script>
+<script>
+    var app = angular.module("detailDialog", ['app.lang', 'angular-image-404']);
+    app.controller('sendOrder', function ($rootScope, $scope, $filter, lang) {
+        $scope.lang = lang;
+        $rootScope.rootPath = window.rootPath;
+        $scope.groups = window.args.groups;
+        $scope.sendfor = window.args.sendfor;
+        /*$scope.sendfor = function(obj,groupname){
+         var content = null;
+         if(!groupname){
+         content = obj.groupName;
+         }else {
+         content = groupname.groupName + obj.name;
+         }
+         var sendDialog = nw.confirm({
+         title: "转出",
+         content:'<div>转给' +  content + '?</div><div class="add-group-name"><input type="text" placeholder="添加问题描述" /></div>',
+         ok: function (dialog) { //确定按钮
+         closeWindow();
+         }
+         });
+
+         }*/
+    });
+</script>
+</body>
+</html>

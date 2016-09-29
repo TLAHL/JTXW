@@ -1,0 +1,236 @@
+
+
+<!DOCTYPE html>
+<html lang="en" ng-app="msgBox">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link href="../css/style.css" rel="stylesheet" type="text/css" />
+    <style>
+	   	.dialog-header{-webkit-app-region: no-drag;app-region: no-drag;}
+	   	.container{overflow:hidden;background: #fff;left: 0;top: 30px;right: 0;bottom: 0;border-bottom-left-radius: 5px;border-bottom-right-radius: 5px;}
+	  	.content{max-height:386px;overflow-y:auto;}
+	  	.content ul{list-style:none;padding:5px 0px;margin:0px;}
+	  	.content ul li{height:41px;padding-bottom:5px; padding:5px; border-bottom:1px solid #cccccc;}
+	  	.content ul li:hover{background-color:#f6f6f6;cursor:pointer;}
+	  	.content .avatar{margin: 5px 0 0 5px;width:40px;display:inline-block;}
+	  	.content .center-text{display:inline-block;width:187px;font-size:13px;  position: relative; top: -5px;left: 5px;}
+	  	.color_5ba3f5{color:#5BA3F5;}
+	  	.color_999{color:#999;}
+	  	.text_overflow{width: 180px; text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
+	  	.msg_count{display: inline-block;height: 20px;width: 20px;font-size: 12px;border-radius: 50%;background-color: #FF3E3E;color: #fff;position: relative;top: -17px;text-align: center;line-height: 18px; "}
+	  	.hiden_all{float:right;font-size:13px;color:#5BA3F5;padding-right:5px;padding-bottom:5px;cursor:pointer;}
+    </style>
+</head>
+
+<body ng-controller = "msgCtrl" style="overflow-y:hidden;">
+	<div id="msgbox"  style="position:relative;">
+		<div class="dialog-header first"  >
+		    <div class="dialog-title">{{lang.messageBox}}</div>
+		</div>
+		<div class="container"style="border:1px solid #36B9AF">
+			<div class="content">
+		        <ul>
+		            <li ng-repeat="conv in msgList|orderBy:'-time' track by $index" ng-show="conv" ng-click="clickMainItem(conv)" ng-switch="conv.type">
+		                <div class="avatar"  ng-switch-when="1">
+		                	<img style="width:35px;" ng-src="{{conv.hid?lang.fileSvr + conv.hid : rootPath + '/img/session-img.png'}}" image-404="../img/session-img.png"/>
+		                </div>
+		                <div class="avatar" ng-switch-when="2">
+		                	<img style="width:35px;" ng-src="{{rootPath + '/img/group-test.png'}}"/>
+		                </div>
+		                <div class="avatar" ng-switch-when="3" ng-switch="conv.id">
+							<img style="width:35px;" ng-switch-when="1001" ng-src="{{rootPath + '/img/todo-icon.png'}}" />
+							<img style="width:35px;" ng-switch-when="1002" ng-src="{{rootPath + '/img/maintenance-icon.png'}}"/>
+							<img style="width:35px;" ng-switch-when="1003" ng-src="{{rootPath + '/img/video-meeting-icon.png'}}"/>
+		                </div>
+		                <div class="avatar" ng-switch-when="4">
+							<img style="width:35px;" ng-src="{{rootPath + '/img/img-new-friends.png'}}" />
+		                </div>
+		                <div class="avatar" ng-switch-when="5">
+							<img style="width:35px;" ng-src="{{rootPath + '/img/groupMsg.png'}}"/>
+		                </div>
+		                <div class="center-text">
+		                    <div class="text_overflow color_5ba3f5" >{{conv.name}}</div>
+		                    <div class="text_overflow color_999"><span ng-if="conv.sendname">{{conv.sendname}}:</span><span ng-bind-html="conv.lastmsg|transformExpression|trustHtml"></span>{{}}</div>
+		                </div>
+		                <div class="msg_count">
+		                    <span>{{conv.unread}}</span>
+		                </div>
+		            </li> 
+		        </ul>
+	    	</div>
+	    	<div class="hiden_all" ng-click="ignoreMsg();">
+	    		忽略全部
+	    	</div>
+		</div>
+	</div>
+<script src="../js/angular/angular.js"></script>
+<script src="../js/nw-native.js"></script>
+<script src="../js/app.lang.js"></script>
+<script src="../js/directive.js"></script>
+<script src="../js/angular-image-404.js"></script>
+
+<script>
+var app = angular.module("msgBox", ['app.lang','angular-image-404']);
+var isHidenMsgBox = true;
+var gui = require('nw.gui');
+var win = gui.Window.get();
+var screenHeight = window.screen.availHeight;
+
+
+//文字转换成表情
+app.filter('transformExpression',function(){
+	return function (data){
+      if(!data) return '';
+      var kindPath = rootPath + '/js/kindeditor-4.1.10/plugins/emoticons/imgs/';
+	
+      // 返回特殊字符 直接转义
+      return data.replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/\n/g, '<br/>')
+          .replace(/\s/g, '&nbsp;')
+          .replace(/\[(emoji_0(([0-6][0-9])|(7[0-2])))\]/gi, '<img src="' + kindPath + '$1.png" border="0" alt="" />')
+          //.replace(/http:\/\/[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"\"])*$/g,'<a href="$1" target="_blank">$1</a>');
+         // .replace(/\bhttp\:\/\/&not;¤&cedil;(\.[\w+\.\:\/\_]+)/gi, "<a href=\"http\:\/\/www$1\">http\:\/\/www$1</a>");
+          .replace(/\b(((http|https)\:\/\/\w+\.[\w+\.\:\/\_]+)|(www\.[\w+\.\:\/\_]+))/gi,"<a href=\"javascript:\" onclick='nw.openUrl(\"$1\" )'>$1<\/a>") ;
+          //.replace(/\b(https\:\/\/\w+\.[\w+\.\:\/\_]+)/gi,"<a href=\"$1\">$1<\/a>")
+      	//.replace(/\b(www\.[\w+\.\:\/\_]+)/gi, "<a href=\"$1\">$1</a>");
+      	//.replace(/\bhttp\:\/\/&not;¤&cedil;(\.[\w+\.\:\/\_]+)/gi, "<a href=\"http\:\/\/www$1\">http\:\/\/www$1</a>");
+
+	};
+});
+
+
+/**
+* 把输入的内容作为html输出
+*/
+app.filter('trustHtml', function ($sce) {
+  return function (input) {
+      return $sce.trustAsHtml(input);
+  }
+});
+
+
+
+var leng = 0;
+app.controller('msgCtrl', function($rootScope, $scope, $timeout, lang){
+    $scope.lang = lang;
+ 
+    window.args.onUpdate(function(list){
+    	if (leng == 0) {
+    		leng = list.length;
+    	} else {
+    		var yy = list.length - leng;
+        	//alert("leng的条数：" + leng + ",列表增加的条数：" + yy);
+        	if (yy > 0) {
+        		win.moveBy(0, -46);
+        	}
+        	leng = list.length;
+    	}
+    	
+    	 
+    	$timeout(function(){
+    		$scope.msgList = list;
+    	});
+    	
+    });
+    
+    
+   	$scope.rootPath = rootPath;
+    
+    //忽略全部
+    $scope.ignoreMsg = function() {
+    	$scope.msgList = [];
+    	window.args.onclean();
+    	window.close();
+    };
+    
+    /**
+    *点击消息框
+    **/
+    $scope.clickMainItem = function(cov) {
+    	window.args.onparentShow(cov);
+    	
+    	$timeout(function(){
+    		var msgList = $scope.msgList;
+    		for(var i=0; i< msgList.length; i++) {
+   				if(id == msgList[i].id) {
+   					$scope.msgList.splice(i, 1);
+   				}
+    		}
+    	});
+    	
+    	if (!$scope.msgList|| !$scope.msgList.length) {
+			window.close();
+			
+			if (leng > 0) {
+				leng = leng - 1;
+			}
+			
+		} else {
+			
+			leng = 0;
+			win.moveBy(0,46);
+		}
+		
+    	
+    }
+    
+    /**
+	 * 获取会话id在sessionList中的索引值 -1表示未找到
+	 * @param id 会话id
+	 * @returns -1表示未找到, 非-1的值表示所在的索引
+	 */
+	function indexOfMsgList(id) {
+		var index = -1;
+		for(var i=0; i< msgList.length; i++) {
+			if(id == msgList[i].id) {
+				return i;
+			}
+		}
+		return index;
+	}
+});
+
+
+function contains(parentNode, childNode) {
+    if (parentNode.contains) {
+        return parentNode != childNode && parentNode.contains(childNode);
+    } else {
+        return !!(parentNode.compareDocumentPosition(childNode) & 16);
+    }
+}
+
+function checkHover(e,target){
+    if (getEvent(e).type=="mouseover")  {
+        return !contains(target,getEvent(e).relatedTarget||getEvent(e).fromElement) && !((getEvent(e).relatedTarget||getEvent(e).fromElement)===target);
+    } else {
+        return !contains(target,getEvent(e).relatedTarget||getEvent(e).toElement) && !((getEvent(e).relatedTarget||getEvent(e).toElement)===target);
+    }
+}
+
+function getEvent(e){
+    return e||window.event;
+}
+
+document.getElementById('msgbox').onmouseover=function(e){
+    if(checkHover(e,this)){
+    	isHidenMsgBox = false;
+    }
+}
+
+ document.getElementById('msgbox').onmouseout=function(e){
+    if(checkHover(e,this)){
+    	isHidenMsgBox = true;
+    	window.close();
+    }
+}
+ 
+setTimeout(function(){
+	if (isHidenMsgBox) {
+		win.close();
+	}
+}, 6000)
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+
+
+<div class="contact-detail-pannel ng-scope" ng-show="activeContact.id">
+    <div class="contact-user">
+        <div class="contact-user-detail">
+            <div class="user-img-detail" ng-show="activeContact.active == 1"><img fb-color="#C5EFF7" src="{{activeContact.hid?lang.fileSvr+activeContact.hid : rootPath + '/img/def_person_l.png'}}" image-404="img/def_person_l.png"></div>
+            <!-- 不登录用户 头像变灰 -->
+            <div class="user-img-detail" ng-show="activeContact.active != 1"><img fb-color="#C5EFF7" src="{{activeContact.hid?lang.fileSvr+activeContact.hid : rootPath + '/img/notouxiang.png'}}" image-404="img/notouxiang.png"></div>
+            <p class="user-name-detail" ng-bind="activeContact.name"></p>
+        </div>
+        <div class="contact-user-detail contact-center">
+        	<div class="user-dept-detail">
+        		<span class="name" style="vertical-align: top;">部门</span><div ng-bind="activeContact.dept" style="display: inline-block;white-space: normal;"></div>
+        	</div>
+        	<div class="user-dept-detail">
+        		<span class="name">电话</span><span ng-bind="activeContact.tele"></span>
+       		</div>
+        </div>
+        <div class="text-center">
+        	<p class="operate log-off btn-send" ng-click="openChatWindow(activeContact)" ng-show="activeContact.active == 1" ng-bind="lang.sendMsg"></p>
+            <!-- 删除好友 -->
+            <p class="operate log-off btn-send" ng-click="deleteMember(activeContact)" ng-show="activeContact.active == 1" ng-bind="lang.delFriend"></p>
+            <p class="ptxt-nosend" ng-click="" ng-show="activeContact.active != 1">当前用户未使用<span ng-bind="lang.appName"></span>，无法发起聊天</p>
+            <!-- 删除好友 -->
+            <p class="operate log-off btn-send" style="margin-top:10px;" ng-click="deleteMember(activeContact)" ng-show="activeContact.active != 1" ng-bind="lang.delFriend"></p>
+        </div>
+
+
+        </div>
+</div>

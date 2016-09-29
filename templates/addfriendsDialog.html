@@ -1,0 +1,29 @@
+<style>
+	.dialog-content{
+		top:0
+	}
+	.validate-input{
+		width: 307px;
+		height: 24px;
+		border-radius: 5px;
+		border: 1px solid #CACACA; 
+		color:#999;
+		font-family:微软雅黑;
+		padding-left:5px;
+	}
+	.close-validate{
+		position: absolute;
+		margin-left: -21px;
+		cursor:pointer;
+		font-size: 21px;
+	}
+	.dialog-content{
+		left:15px;
+		right:13px;
+	}
+</style>
+<div>
+	<p style="margin: 5px;color: #454545;font-size: 14px;text-align: left;">请输入验证信息:</p>
+	<input class="validate-input" id="remarksMessage" ng-model="args.selfName" type="text" maxlength="10">
+	<span title="清除文字" class="close-validate" ng-if="args.selfName" ng-click = "args.selfName=''">×</span>
+</div>

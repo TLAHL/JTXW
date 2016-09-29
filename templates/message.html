@@ -1,0 +1,147 @@
+<div class="msg-container" ng-class="{'me':message.self, 'not-me': !message.self || !message.type}" id="msg-{{message.msgid}}" data-index="{{$index}}}" >
+    <!--聊天时间-->
+    <div class='chatdate'>{{message.time|formattime}}</div>
+
+    <!--撤回的消息-->
+    <div ng-if="message.type == 99" style="text-align: center;">
+        <span style="line-height: 20px;word-break:break-all;word-wrap:break-word;" class="msg-type-recall" ng-bind="message.msg"></span>
+    </div>
+
+    <!--显示头像和内容-->
+    <div ng-if="message.type != 99" class="chat-item" id="msg-item-{{message.msgid}}" ng-class="{'me':message.self, 'not-me': !message.self}">
+
+        <div class="avatar chat-detail single-chat">
+            <img ng-click="viewInf(message)" ng-src="{{isgroup?(message.hid?(lang.fileSvr + message.hid): (rootPath + '/img/session-img.png')) : (message.self?currentUser.chatImg : (activeSession.hid? lang.fileSvr + activeSession.hid : rootPath + '/img/chat_def_person.png'))}}" image-404="img/chat_def_person.png">
+        </div>
+
+        <!--发送者名称,群聊时需要显示发送者名称-->
+        <div class="group-sendname" ng-if="isgroup && !message.self">{{message.sendname}}</div>
+
+        <div class="msg-content" ng-if="!message.type" >
+            <div class="msg-type-text" style="width:50px; text-align: center">
+                <img ng-src="{{rootPath + '/img/msg-loading.gif'}}" />
+            </div>
+        </div>
+
+        <!--闪信-->
+        <div class="msg-bubble-content msg-content" ng-if="message.flashsms" ng-switch="message.type"
+             ng-class="{'file-process-container':message.type == 2 || message.type == 3}"
+             context-menu="getContextMenu(message)">
+            <div class="msg-bubble-icon"></div>
+            <!--已销毁-->
+            <div class="msg-type-text" style="color: #999;" ng-if="other = (!message.self && message.state == 7)" ng-bind="message.msg|trustHtml"></div>
+
+            <!--文本消息,未销毁-->
+            <div class="msg-type-text" ng-if="!message.self && message.state != 7 && message.state != 6" style="cursor: pointer;"  ng-click="textClick(message)" ng-switch-when="1"><img height="17px" style="vertical-align: top;  padding-right: 5px;" src="img/textPic.png" />点击查看</div>
+           	<!--  链接 -->
+            <div class="msg-type-text handle-link" ng-if="!message.self && message.state == 6 " ng-switch-when="1" ng-bind-html="message.msg|transformExpression|trustHtml"></div>
+			<div class="msg-type-text" ng-if="message.self" ng-bind-html="message.msg|transformExpression|trustHtml"  ng-switch-when="1"></div>
+            	
+            <!--图片,未销毁-->
+            <div class="msg-type-img" ng-if="!other" ng-switch-when="2" ng-click="imgClick(message)">
+                <!--显示缩略图-->
+                <img ng-src="{{'data:image/png;base64,' + message.minimap}}"/>
+                <!--message.state 3 正在上传 2正在下载-->
+                <meter class="file-process file-process-position" ng-show="message.self?message.state==3:message.state==2" value='{{message.process}}' min='1' max='100'></meter>
+            </div>
+
+            <!--语音,未销毁-->
+            <div class="msg-type-voice msg-type-text" ng-if="!other" ng-switch-when="3"
+                 ng-class="{'msg-voice-play':message.playing}" ng-click="downloadAudioMedia(message)" style="width:{{getVoiceLength(message.vtime)}}">
+                <span ng-bind="message.vtime"></span>
+                <!--接收到语音消息, 初始状态显示红点-->
+                <i class="voice-unread-icon" ng-if="!message.self && message.type == 0"></i>
+                <!--message.state 3 正在上传 2正在下载-->
+                <meter class="file-process file-process-position" ng-show="message.self?message.state==3:message.state==2" value='{{message.process}}' min='1' max='100'></meter>
+            </div>
+        </div>
+
+        <!--消息类型 1文本,2 图片,3语音,4文件, 5视频, 6链接-->
+        <div class="msg-content" ng-if="!message.flashsms && message.type" ng-switch="message.type"
+             ng-class="{'file-process-container':message.type == 2 || message.type == 3 || message.type == 4 || message.type == 5}"
+                context-menu="getContextMenu(message)" >
+            <!--文本消息-->
+            <div class="msg-type-text handle-link" ng-bind-html="message.msg|transformExpression|trustHtml" ng-switch-when="1"></div>
+
+            <!--图片-->
+            <div class="msg-type-img" ng-switch-when="2" ng-click="imgClick(message)">
+                <!--显示缩略图-->
+                <img ng-src="{{'data:image/png;base64,' + message.minimap}}" />
+                <!--message.state 3 正在上传 2正在下载-->
+                <meter class="file-process file-process-position" ng-show="message.self?message.state==3:message.state==2" value='{{message.process}}' min='1' max='100'></meter>
+            </div>
+
+            <!--语音-->
+            <div ng-switch-when="3" class="msg-type-voice msg-type-text"
+                 ng-class="{'msg-voice-play':message.playing}" ng-click="downloadAudioMedia(message)" style="width:{{getVoiceLength(message.vtime)}}">
+                <span ng-bind="message.vtime"></span>＂
+                <!--接收到语音消息, 初始状态显示红点-->
+                <i class="voice-unread-icon" ng-if="!message.self && message.state == 0"></i>
+                <!--message.state 3 正在上传 2正在下载-->
+                <meter class="file-process file-process-position" ng-show="message.self?message.state==3:message.state==2" value='{{message.process}}' min='1' max='100'></meter>
+            </div>
+
+            <!--文件-->
+            <div ng-switch-when="4" class="msg-type-file msg-type-text" ng-click="downloadFileAndVideo(message)">
+                <!--文件名-->
+                <div class="file-name" ng-bind="message.filename"></div>
+                <div class="file-size">{{message.size|byteConvert}}</div>
+                <!--message.state 3 正在上传 2正在下载-->
+                <meter class="file-process file-process-position" ng-show="message.self?message.state==3:message.state==2" value='{{message.process}}' min='1' max='100'></meter>
+            </div>
+
+            <!--视频-->
+            <div ng-switch-when="5" class="msg-type-video"  ng-click="downloadFileAndVideo(message)" style="cursor: pointer;">
+                <img ng-src="{{'data:image/png;base64,' + message.minimap}}"/>
+                <div class="play-cover">
+                    <span class="btn-play glyphicon glyphicon-play-circle" ></span>
+                </div>
+                <div class="conver-bottom" >
+                    <!--<span>20KB</span>-->
+                    <span class="conver-bottom-time"><span ng-bind="message.vtime"></span>＂</span>
+                </div>
+                <!--message.state 3 正在上传 2正在下载-->
+                <meter class="file-process file-process-position" ng-show="message.self?message.state==3:message.state==2" value='{{message.process}}' min='1' max='100'></meter>
+            </div>
+
+            <!--连接-->
+            <div ng-switch-when="6" class="msg-type-link" ng-click="openUrl(message)" style="cursor: pointer;">
+                <!--标题-->
+                <div class="link-title" ng-bind="message.title|decodeURI"></div>
+                <div class="link-content">
+                    <div class="link-img"><img ng-src="{{message.minimap?'data:image/png;base64,' + message.minimap : rootPath + '/img/default-link-icon.png'}}" /></div>
+                    <div class="link-intro" ng-bind="message.intro|decodeURI"></div>
+                </div>
+            </div>
+        </div>
+
+		<!--发送时消息状态-->
+        <div class="msg-state" ng-if="isgroup && message.self" ng-switch="message.state">
+            <!--发送失败-->
+            <span title="{{lang.resend}}" class="msg-state-icon msg-state-failed" ng-switch-when="1" ng-click="reSendMessage(message)"></span>
+        </div>
+        
+        <!--发送时消息状态-->
+        <div class="msg-state" ng-if="!isgroup && message.self" ng-switch="message.state">
+            <!--正在发送-->
+            <span class="msg-state-icon msg-state-ready" ng-switch-when="0"></span>
+            <!--发送失败-->
+            <span title="{{lang.resend}}" class="msg-state-icon msg-state-failed" ng-switch-when="1" ng-click="reSendMessage(message)"></span>
+            <span class="msg-state-downloading" ng-switch-when="2">已损坏</span>
+            <!--3 正在上传-->
+            <!--4.暂停上传-->
+            <span class="msg-state-text" ng-switch-when="4">已暂停</span>
+            <!--已经发送-->
+            <span class="msg-state-text" ng-switch-when="5">已发送</span>
+            <!--已经送达-->
+            <span class="msg-state-text" ng-switch-when="6">已送达</span>
+            <!--已经阅读-->
+            <span class="msg-state-text" ng-switch-when="7">已阅读</span>
+            <!--已经销毁-->
+            <span class="msg-state-text" ng-switch-when="8">已销毁</span>
+        </div>
+    </div>
+
+    <i class="clearfix"></i>
+    <!--/单人聊天-->
+</div>

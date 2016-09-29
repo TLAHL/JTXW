@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="dialogApp">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link href="../css/style.css" rel="stylesheet" type="text/css"/>
+</head>
+<body ng-controller="dialogController">
+<div class="dialog-header first">
+    <div class="dialog-title" ng-bind-html="args.title|trustHtml"></div>
+    <div class="win-buttons">
+        <!--<span class="mini-window-btn window-btn" onclick="miniWindow()" ng-if="args.miniAble"></span>
+        <span class="max-window-btn window-btn" onclick="ngMaxWindow()" ng-if="args.maxAble"></span>-->
+        <span class="close-window-btn window-btn" onclick="closeWindow()" ng-if="args.closeAble">×</span>
+    </div>
+</div>
+
+<div class="window-container">
+    <div class="dialog-content">
+        <div class="dialog-content-parent">
+            <div class="dialog-content-child" ng-include="args.url" ng-if="!args.content && args.url"></div>
+            <div class="dialog-content-child" ng-bind-html="args.content|trustHtml"
+                 ng-if="args.content && !args.url"></div>
+        </div>
+    </div>
+
+    <div class="dialog-buttons" ng-if="args.buttons && args.buttons.length">
+        <div class="operate" ng-class="{'log-off':btn.primary, 'revise':!btn.primary}" ng-repeat="btn in args.buttons"
+             ng-click="btn.callback && btn.callback(win)" ng-bind="btn.name">
+        </div>
+    </div>
+</div>
+<script src="../js/angular/angular.js"></script>
+<script src="../js/nw-native.js"></script>
+<script>
+
+    var app = angular.module("dialogApp", []);
+    /**
+     * 把输入的内容作为html输出
+     */
+    app.filter('trustHtml', function ($sce) {
+        return function (input) {
+            return $sce.trustAsHtml(input);
+        }
+    });
+
+    app.controller('dialogController', function ($scope) {
+        $scope.args = window.args;
+        $scope.win = thisWindow;
+    });
+
+    var isMax = false;
+    thisWindow.on('maximize', function () {
+        isMax = true;
+    });
+
+    thisWindow.on('unmaximize', function () {
+        isMax = false;
+    });
+
+    function ngMaxWindow() {
+        isMax ? unmaxWindow() : maxWindow();
+    }
+</script>
+</body>
+</html>

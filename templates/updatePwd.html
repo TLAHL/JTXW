@@ -1,0 +1,57 @@
+<style>
+    .input-text {
+        width: 274px;
+    }
+
+    .pwd-container {
+        position: absolute;
+        left: -30px;
+        right: -30px;
+        top: -10px;
+    }
+
+    .pwd-container td {
+        padding-bottom: 33px;
+        text-align: left;
+    }
+
+    .modify-one td {
+        padding-bottom:30px;
+    }
+
+    .modify-one td p {
+        position: absolute;
+        font-size: 12px;
+        margin-top: 3px;
+        margin-left: 3px;
+        text-align: left;
+        padding-left: 6px;
+        line-height: 22px;
+        color: #666;
+    }
+
+    .modify-two td {
+        padding-bottom: 15px;
+    }
+</style>
+<div class="pwd-container">
+    <p id="errorMessage" style="text-align:center;color:red;height:25px;font-size:14px;margin-top:-10px"></p>
+    <table width="100%">
+        <tr class="modify-one">
+            <td>当前密码</td>
+            <td><input type="password" id="oldpwd" oncopy="return false" onpaste="return false" class="input-text" maxlength="12" placeholder="请输入当前密码">
+                <p>密码由6-12位字符组成</p>
+            </td>
+        </tr>
+        <tr class="modify-two">
+            <td>新密码</td>
+            <td><input type="password" id="newpwd" oncopy="return false" onpaste="return false" class="input-text"
+                       maxlength="12" placeholder="请输入新密码"></td>
+        </tr>
+        <tr>
+            <td>确认新密码</td>
+            <td><input type="password" id="reviewpwd" oncopy="return false" onpaste="return false" class="input-text"
+                       maxlength="12" placeholder="请输入确认新密码"></td>
+        </tr>
+    </table>
+</div>

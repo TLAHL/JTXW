@@ -1,0 +1,117 @@
+<style rel="stylesheet" type="text/css">
+	.custom-list .tab-content{
+		top: 87px;
+	}
+	.end{
+		color: #666666;
+		background-color: #d8dee8;
+		border-radius: 3px;
+	}
+</style>
+<div id="sub-menu-pannel" class="conv-list-pannel list-bottom" >
+    <div class="conv-lists-box custom-list ng-isolate-scope conv-list-pannel-contact">
+        <ul class="list-with-avatar-and-info conv-lists">
+        	<li class="list-item conv-item context-menu avatar-container board-title" style="height: 50px;line-height: 50px;padding: 5px 0 5px 19px;border-bottom: 1px solid #36b9af;"
+                ng-class="{'active':'100001' == activeWXSession.sessionid}" ng-click = openBoard('100001')>
+                <div class="content-pannel-head">
+			        <p class="head-title conv-title" style="vertical-align:middle;">
+			            <img src="img/board.png" width="40" />
+			            <span style="position:relative;top:-16px;">
+			                <span style="margin-left: 7px;color: #333;" >
+			                    <span>待办咨询</span>
+			                </span>
+			            </span>
+			        </p>
+			    </div>
+        	</li>
+               </ul>
+		 		<tabset justified="true" class="list-with-avatar-and-info conv-lists">
+					<tab heading="服务中" active="tab.sessionActive" ng-click="changeSessionTab(0)">
+					    <div id="sub-menu-pannel" class="conv-list-pannel">
+					    	<ul class="list-with-avatar-and-info conv-lists">
+				            <li class="list-item conv-item context-menu avatar-container"
+				                style="cursor: pointer"
+				                ng-class="{'active':conv.sessionid == activeWXSession.sessionid}"
+				                ng-repeat="conv in wxSessionList" ng-if="conv.state == 0 || conv.state == 2"
+				                ng-click="clickSessionItem(conv)" id="chat-{{conv.sessionid}}" data-index="{{$index}}"
+				                context-menu="getListContextMenu(conv)">
+				                <div ng-if="conv.top" class="list-top"></div>
+				
+				                
+				                <div class="avatar  single-chat three " >
+				                    <div class="unread-icon" ng-show="conv.unread>0"
+				                         ng-class="{'unread-lt99':conv.unread > 0 && conv.unread<100, 'unread-gt99':conv.unread>99}">
+				                        {{conv.unread>99?'' : conv.unread}}
+				                    </div>
+				                    <div class="avatar-container">
+				                        <img ng-src="{{conv.wxhid?lang.fileSvr + conv.wxhid :rootPath + '/img/session-img.png'}}" image-404="img/session-img.png"/>
+				
+				                    </div>
+				                </div>
+				                <div class="info">
+				                    <p class="name ng-binding" ng-class="{'active':conv.sessionid == activeWXSession.sessionid}" ng-bind="conv.wxusername"></p>
+				                </div>
+				                <div class="info" style="width:50%">
+				                	<p class="disable-link"></p>
+				                    <p class="latest-msg last-message" ng-class="{'active':conv.sessionid == activeWXSession.sessionid}">
+				                    <img src="img/send-failed.png" style="vertical-align: middle; width: 15px; height: 15px; margin-left: 3px;" ng-if="conv.sendfailed== 1" />
+				                    <span ng-class="{'active':conv.sessionid === activeWXSession.sessionid}" ng-bind-html="conv.lastmsg|transformExpression|trustHtml"></span>
+				                    </p>
+				                </div>
+				                <span  class="time"
+				                      ng-class="{'active':conv.sessionid === activeWXSession.sessionid}">
+				                    {{conv.time|formattimeSession}}
+				                </span>
+				                <span ng-if="conv.state == 2"  class="waitting"
+				                      ng-class="{'active':conv.sessionid === activeWXSession.sessionid}">
+				                      待访
+				                </span>
+				            </li>
+				            </ul>
+				            </div>
+				        </tab>
+				        <tab heading="已结束" active="tab.sessionDisplay" ng-click="changeSessionTab(1)">
+					    <div id="sub-menu-pannel" class="conv-list-pannel">
+					    	<ul class="list-with-avatar-and-info conv-lists">
+				            <li class="list-item conv-item context-menu avatar-container"
+				                style="cursor: pointer"
+				                ng-class="{'active':conv.sessionid == activeWXSession.sessionid}"
+				                ng-repeat="conv in wxSessionList" ng-if="conv.state == 1"
+				                ng-click="clickSessionItem(conv)" id="chat-{{conv.sessionid}}" data-index="{{$index}}"
+				                context-menu="getListContextMenu(conv)">
+				                <div ng-if="conv.top" class="list-top"></div>
+				
+				                <!--群聊-->
+				                <div class="avatar  single-chat three " >
+				                    <div class="unread-icon" ng-show="conv.unread>0"
+				                         ng-class="{'unread-lt99':conv.unread > 0 && conv.unread<100, 'unread-gt99':conv.unread>99}">
+				                        {{conv.unread>99?'' : conv.unread}}
+				                    </div>
+				                    <div class="avatar-container">
+				                        <img ng-src="{{conv.wxhid?lang.fileSvr + conv.wxhid :rootPath + '/img/session-img.png'}}" image-404="img/session-img.png"/>
+				
+				                    </div>
+				                </div>
+				                <div class="info">
+				                    <p class="name ng-binding" ng-class="{'active':conv.sessionid == activeWXSession.sessionid}" ng-bind="conv.wxusername"></p>
+				                </div>
+				                <div class="info"  style="width: 50%;">
+				                	<p class="disable-link"></p>
+				                    <p class="latest-msg last-message" ng-class="{'active':conv.sessionid == activeWXSession.sessionid}">
+				                    <img src="img/send-failed.png" style="vertical-align: middle; width: 15px; height: 15px; margin-left: 3px;" ng-if="conv.sendfailed== 1" />
+				                    <span ng-class="{'active':conv.sessionid === activeWXSession.sessionid}" ng-bind-html="conv.lastmsg|transformExpression|trustHtml"></span>
+				                    </p>
+				                </div>
+				                <span  class="time"
+				                      ng-class="{'active':conv.sessionid === activeWXSession.sessionid}">
+				                    {{conv.time|formattimeSession}}
+				                </span>
+				            </li>
+				            </ul>
+				            </div>
+				    </tab>
+				</tabset>
+    </div>
+</div>
+<div ui-view="" id="content-pannel" class="ng-scope">
+</div>
